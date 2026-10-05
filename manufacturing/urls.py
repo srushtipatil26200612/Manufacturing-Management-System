@@ -23,4 +23,8 @@ path('suppliers/', views.supplier_page, name='supplier_page'),
 path('add-supplier/', views.add_supplier, name='add_supplier'),
 path('delete-supplier/<int:supplier_id>/', views.delete_supplier, name='delete_supplier'),
 path('edit-supplier/<int:supplier_id>/', views.edit_supplier, name='edit_supplier'),
+path('raw-materials/', views.raw_material_page, name='raw_material_page'),
+path('add-raw-material/', views.add_raw_material, name='add_raw_material'),
+path('edit-raw-material/<int:material_id>/', views.edit_raw_material, name='edit_raw_material'),
+path('delete-raw-material/<int:material_id>/', views.delete_raw_material, name='delete_raw_material'),
 ]

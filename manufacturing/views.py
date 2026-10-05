@@ -1,7 +1,7 @@
 from django.shortcuts import render , redirect
 from django.db import IntegrityError
 from django.http import JsonResponse
-from .models import Product ,  Category ,Supplier
+from .models import Product ,  Category ,Supplier ,RawMaterial
 
 
 def product_list(request):
@@ -199,3 +199,77 @@ def edit_supplier(request, supplier_id):
     return render(request, 'edit_supplier.html', {
         'supplier': supplier
     })
+
+def raw_material_page(request):
+    raw_materials = RawMaterial.objects.all()
+
+    return render(request, 'raw_materials.html', {
+        'raw_materials': raw_materials
+    })
+
+def add_raw_material(request):
+    suppliers = Supplier.objects.all()
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        material_code = request.POST.get('material_code')
+        supplier = request.POST.get('supplier')
+        quantity = request.POST.get('quantity')
+        unit = request.POST.get('unit')
+        price = request.POST.get('price')
+
+        try:
+            RawMaterial.objects.create(
+                name=name,
+                material_code=material_code,
+                supplier_id=supplier,
+                quantity=quantity,
+                unit=unit,
+                price=price
+            )
+
+            return redirect('raw_material_page')
+
+        except IntegrityError:
+            return render(request, 'add_raw_material.html', {
+                'error': 'Material code already exists.',
+                'suppliers': suppliers
+            })
+
+    return render(request, 'add_raw_material.html', {
+        'suppliers': suppliers
+    })
+
+def edit_raw_material(request, material_id):
+    material = RawMaterial.objects.get(id=material_id)
+    suppliers = Supplier.objects.all()
+
+    if request.method == 'POST':
+        material.name = request.POST.get('name')
+        material.material_code = request.POST.get('material_code')
+        material.supplier_id = request.POST.get('supplier')
+        material.quantity = request.POST.get('quantity')
+        material.unit = request.POST.get('unit')
+        material.price = request.POST.get('price')
+
+        try:
+            material.save()
+            return redirect('raw_material_page')
+
+        except IntegrityError:
+            return render(request, 'edit_raw_material.html', {
+                'material': material,
+                'suppliers': suppliers,
+                'error': 'Material code already exists.'
+            })
+
+    return render(request, 'edit_raw_material.html', {
+        'material': material,
+        'suppliers': suppliers
+    })
+
+def delete_raw_material(request, material_id):
+    material = RawMaterial.objects.get(id=material_id)
+    material.delete()
+
+    return redirect('raw_material_page')
