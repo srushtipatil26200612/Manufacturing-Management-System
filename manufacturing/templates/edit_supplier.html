@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Edit Supplier</title>
+</head>
+
+<body>
+
+    <h1>Edit Supplier</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Supplier Name:</label><br>
+        <input type="text"
+               name="name"
+               value="{{ supplier.name }}"
+               required>
+
+        <br><br>
+
+        <label>Contact:</label><br>
+        <input type="text"
+               name="contact"
+               value="{{ supplier.contact }}"
+               required>
+
+        <br><br>
+
+        <label>Email:</label><br>
+        <input type="email"
+               name="email"
+               value="{{ supplier.email }}">
+
+        <br><br>
+
+        <label>Address:</label><br>
+        <textarea name="address">{{ supplier.address }}</textarea>
+
+        <br><br>
+
+        <button type="submit">Update Supplier</button>
+
+    </form>
+
+    <br>
+
+    <a href="{% url 'supplier_page' %}">← Back to Suppliers</a>
+
+</body>
+
+</html>
