@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Enquiry</title>
+</head>
+<body>
+
+    <h1>Edit Enquiry</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Customer:</label><br>
+        <select name="customer" required>
+
+            {% for customer in customers %}
+                <option value="{{ customer.id }}"
+                    {% if customer.id == enquiry.customer.id %}selected{% endif %}>
+                    {{ customer.name }}
+                </option>
+            {% endfor %}
+
+        </select>
+
+        <br><br>
+
+        <label>Product:</label><br>
+        <select name="product" required>
+
+            {% for product in products %}
+                <option value="{{ product.id }}"
+                    {% if product.id == enquiry.product.id %}selected{% endif %}>
+                    {{ product.name }}
+                </option>
+            {% endfor %}
+
+        </select>
+
+        <br><br>
+
+        <label>Quantity:</label><br>
+        <input type="number"
+               name="quantity"
+               value="{{ enquiry.quantity }}"
+               min="1"
+               required>
+
+        <br><br>
+
+        <label>Requirements:</label><br>
+        <textarea name="requirements" rows="4">{{ enquiry.requirements }}</textarea>
+
+        <br><br>
+
+        <label>Status:</label><br>
+        <select name="status">
+
+            <option value="New"
+                {% if enquiry.status == "New" %}selected{% endif %}>
+                New
+            </option>
+
+            <option value="In Progress"
+                {% if enquiry.status == "In Progress" %}selected{% endif %}>
+                In Progress
+            </option>
+
+            <option value="Quoted"
+                {% if enquiry.status == "Quoted" %}selected{% endif %}>
+                Quoted
+            </option>
+
+            <option value="Closed"
+                {% if enquiry.status == "Closed" %}selected{% endif %}>
+                Closed
+            </option>
+
+        </select>
+
+        <br><br>
+
+        <button type="submit">Update Enquiry</button>
+    </form>
+
+    <br>
+
+    <a href="{% url 'enquiry_page' %}">
+        ← Back to Enquiries
+    </a>
+
+</body>
+</html>

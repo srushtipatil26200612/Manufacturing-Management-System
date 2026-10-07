@@ -1,7 +1,7 @@
 from django.shortcuts import render , redirect
 from django.db import IntegrityError
 from django.http import JsonResponse
-from .models import Product ,  Category ,Supplier ,RawMaterial
+from .models import Product ,  Category ,Supplier ,RawMaterial ,Customer ,Enquiry ,Quotation
 
 
 def product_list(request):
@@ -273,3 +273,177 @@ def delete_raw_material(request, material_id):
     material.delete()
 
     return redirect('raw_material_page')
+
+def customer_page(request):
+    customers = Customer.objects.all()
+
+    return render(request, 'customers.html', {
+        'customers': customers
+    })
+
+def add_customer(request):
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+
+        Customer.objects.create(
+            name=name,
+            email=email,
+            phone=phone,
+            address=address
+        )
+
+        return redirect('customer_page')
+
+    return render(request, 'add_customer.html')
+
+def edit_customer(request, customer_id):
+    customer = Customer.objects.get(id=customer_id)
+
+    if request.method == 'POST':
+        customer.name = request.POST.get('name')
+        customer.email = request.POST.get('email')
+        customer.phone = request.POST.get('phone')
+        customer.address = request.POST.get('address')
+
+        customer.save()
+
+        return redirect('customer_page')
+
+    return render(request, 'edit_customer.html', {
+        'customer': customer
+    })
+
+def delete_customer(request, customer_id):
+    customer = Customer.objects.get(id=customer_id)
+    customer.delete()
+
+    return redirect('customer_page')
+
+def enquiry_page(request):
+    enquiries = Enquiry.objects.all()
+
+    return render(request, 'enquiries.html', {
+        'enquiries': enquiries
+    })
+
+def add_enquiry(request):
+    customers = Customer.objects.all()
+    products = Product.objects.all()
+
+    if request.method == 'POST':
+        customer = request.POST.get('customer')
+        product = request.POST.get('product')
+        quantity = request.POST.get('quantity')
+        requirements = request.POST.get('requirements')
+        status = request.POST.get('status')
+
+        Enquiry.objects.create(
+            customer_id=customer,
+            product_id=product,
+            quantity=quantity,
+            requirements=requirements,
+            status=status
+        )
+
+        return redirect('enquiry_page')
+
+    return render(request, 'add_enquiry.html', {
+        'customers': customers,
+        'products': products
+    })
+
+def edit_enquiry(request, enquiry_id):
+    enquiry = Enquiry.objects.get(id=enquiry_id)
+
+    customers = Customer.objects.all()
+    products = Product.objects.all()
+
+    if request.method == 'POST':
+        enquiry.customer_id = request.POST.get('customer')
+        enquiry.product_id = request.POST.get('product')
+        enquiry.quantity = request.POST.get('quantity')
+        enquiry.requirements = request.POST.get('requirements')
+        enquiry.status = request.POST.get('status')
+
+        enquiry.save()
+
+        return redirect('enquiry_page')
+
+    return render(request, 'edit_enquiry.html', {
+        'enquiry': enquiry,
+        'customers': customers,
+        'products': products
+    })
+
+def delete_enquiry(request, enquiry_id):
+    enquiry = Enquiry.objects.get(id=enquiry_id)
+    enquiry.delete()
+
+    return redirect('enquiry_page')
+
+def quotation_page(request):
+    quotations = Quotation.objects.all()
+
+    return render(request, 'quotations.html', {
+        'quotations': quotations
+    })
+
+def add_quotation(request):
+    enquiries = Enquiry.objects.all()
+
+    if request.method == 'POST':
+        enquiry = request.POST.get('enquiry')
+        quotation_number = request.POST.get('quotation_number')
+        quantity = request.POST.get('quantity')
+        price = request.POST.get('price')
+        lead_time = request.POST.get('lead_time')
+        version = request.POST.get('version')
+        status = request.POST.get('status')
+
+        Quotation.objects.create(
+            enquiry_id=enquiry,
+            quotation_number=quotation_number,
+            quantity=quantity,
+            price=price,
+            lead_time=lead_time,
+            version=version,
+            status=status
+        )
+
+        return redirect('quotation_page')
+
+    return render(request, 'add_quotation.html', {
+        'enquiries': enquiries
+    })
+
+def edit_quotation(request, quotation_id):
+    quotation = Quotation.objects.get(id=quotation_id)
+    enquiries = Enquiry.objects.all()
+
+    if request.method == 'POST':
+        quotation.enquiry_id = request.POST.get('enquiry')
+        quotation.quotation_number = request.POST.get('quotation_number')
+        quotation.quantity = request.POST.get('quantity')
+        quotation.price = request.POST.get('price')
+        quotation.lead_time = request.POST.get('lead_time')
+        quotation.version = request.POST.get('version')
+        quotation.status = request.POST.get('status')
+
+        quotation.save()
+
+        return redirect('quotation_page')
+
+    return render(request, 'edit_quotation.html', {
+        'quotation': quotation,
+        'enquiries': enquiries
+    })
+
+def delete_quotation(request, quotation_id):
+    quotation = Quotation.objects.get(id=quotation_id)
+    quotation.delete()
+
+    return redirect('quotation_page')

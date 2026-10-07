@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Customer</title>
+</head>
+<body>
+
+    <h1>Add New Customer</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Customer Name:</label><br>
+        <input type="text" name="name" required>
+
+        <br><br>
+
+        <label>Email:</label><br>
+        <input type="email" name="email">
+
+        <br><br>
+
+        <label>Phone:</label><br>
+        <input type="text" name="phone" required>
+
+        <br><br>
+
+        <label>Address:</label><br>
+        <textarea name="address" rows="4"></textarea>
+
+        <br><br>
+
+        <button type="submit">Add Customer</button>
+    </form>
+
+    <br>
+
+    <a href="{% url 'customer_page' %}">
+        ← Back to Customers
+    </a>
+
+</body>
+</html>

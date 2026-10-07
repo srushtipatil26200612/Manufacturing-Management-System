@@ -27,4 +27,32 @@ path('raw-materials/', views.raw_material_page, name='raw_material_page'),
 path('add-raw-material/', views.add_raw_material, name='add_raw_material'),
 path('edit-raw-material/<int:material_id>/', views.edit_raw_material, name='edit_raw_material'),
 path('delete-raw-material/<int:material_id>/', views.delete_raw_material, name='delete_raw_material'),
+path('customers/', views.customer_page, name='customer_page'),
+path('add-customer/', views.add_customer, name='add_customer'),
+path('edit-customer/<int:customer_id>/', views.edit_customer, name='edit_customer'),
+path('delete-customer/<int:customer_id>/', views.delete_customer, name='delete_customer'),
+path('enquiries/', views.enquiry_page, name='enquiry_page'),
+path('add-enquiry/', views.add_enquiry, name='add_enquiry'),
+path(
+    'edit-enquiry/<int:enquiry_id>/',
+    views.edit_enquiry,
+    name='edit_enquiry'
+),
+path(
+    'delete-enquiry/<int:enquiry_id>/',
+    views.delete_enquiry,
+    name='delete_enquiry'
+),
+path('quotations/', views.quotation_page, name='quotation_page'),
+path('add-quotation/', views.add_quotation, name='add_quotation'),
+path(
+    'edit-quotation/<int:quotation_id>/',
+    views.edit_quotation,
+    name='edit_quotation'
+),
+path(
+    'delete-quotation/<int:quotation_id>/',
+    views.delete_quotation,
+    name='delete_quotation'
+),
 ]
