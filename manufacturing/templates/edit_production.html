@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Production</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            padding: 30px;
+        }
+
+        .form-container {
+            max-width: 550px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px #cbd5e1;
+        }
+
+        h1 { color: #1e3a8a; }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px;
+            width: 100%;
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-button {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h1>Edit Production</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Production Number</label>
+        <input type="text" name="production_number"
+               value="{{ production.production_number }}" required>
+
+        <label>Product</label>
+        <select name="product" required>
+            {% for product in products %}
+            <option value="{{ product.id }}"
+                {% if product.id == production.product_id %}selected{% endif %}>
+                {{ product.name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Quantity</label>
+        <input type="number" name="quantity" min="1"
+               value="{{ production.quantity }}" required>
+
+        <label>Start Date</label>
+        <input type="date" name="start_date"
+               value="{{ production.start_date|date:'Y-m-d' }}" required>
+
+        <label>End Date</label>
+        <input type="date" name="end_date"
+               value="{{ production.end_date|date:'Y-m-d' }}">
+
+        <label>Status</label>
+        <select name="status" required>
+            <option value="Pending"
+                {% if production.status == 'Pending' %}selected{% endif %}>
+                Pending
+            </option>
+            <option value="In Progress"
+                {% if production.status == 'In Progress' %}selected{% endif %}>
+                In Progress
+            </option>
+            <option value="Completed"
+                {% if production.status == 'Completed' %}selected{% endif %}>
+                Completed
+            </option>
+        </select>
+
+        <button type="submit">Update Production</button>
+    </form>
+
+    <form method="POST"
+          action="/api/delete-production/{{ production.id }}/"
+          onsubmit="return confirm('Are you sure you want to delete this production?');">
+        {% csrf_token %}
+        <button type="submit" class="delete-button">
+            Delete Production
+        </button>
+    </form>
+
+    <p><a href="/api/production/">Back to Production List</a></p>
+</div>
+</body>
+</html>

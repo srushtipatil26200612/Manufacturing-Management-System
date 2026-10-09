@@ -1,9 +1,8 @@
+
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Manufacturing Management System</title>
-
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,107 +11,67 @@
         }
 
         .header {
-            background: #333;
+            background: #263746;
             color: white;
-            padding: 25px;
+            padding: 50px 20px;
             text-align: center;
         }
 
         .container {
-            width: 80%;
-            margin: 40px auto;
             text-align: center;
+            margin: 70px auto;
         }
 
-        .card {
+        .container a {
             display: inline-block;
-            width: 220px;
-            margin: 15px;
-            padding: 25px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        .card h2 {
-            margin-bottom: 15px;
-        }
-
-        .card a {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #333;
+            padding: 13px 25px;
+            margin: 10px;
+            background: #263746;
             color: white;
             text-decoration: none;
             border-radius: 5px;
         }
 
-        .card a:hover {
-            background: #555;
+        .container a:hover {
+            background: #40596e;
+        }
+
+        .topbar {
+            text-align: right;
+            padding: 15px;
+            background: white;
         }
     </style>
 </head>
-
 <body>
+
+    <div class="topbar">
+        {% if user.is_authenticated %}
+            Welcome, {{ user.username }}!
+            <form method="post" action="{% url 'logout' %}"
+                  style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Admin Login</a>
+        {% endif %}
+    </div>
 
     <div class="header">
         <h1>Manufacturing Management System</h1>
-        <p>Product Management Dashboard</p>
+        <p>Manage products, categories and manufacturing operations efficiently.</p>
     </div>
 
     <div class="container">
+        <h2>Welcome to Our System</h2>
+        <p>Manage your manufacturing activities in one place.</p>
 
-        <div class="card">
-            <h2>Products</h2>
-            <p>View all products</p>
-            <p><strong>Total Products: {{ product_count }}</strong></p>
-            <p>Manage your products, quantity and prices.</p>
-            <a href="{% url 'product_page' %}">View Products</a>
-        </div>
-
-        <div class="card">
-            <h2>Add Product</h2>
-            <p>Add a new product</p>
-            <a href="{% url 'add_product' %}">Add Product</a>
-        </div>
-
-       <div class="card">
-          <h2>Categories</h2>
-          <p>View product categories</p>
-          <p><strong>Total Categories: {{ category_count }}</strong></p>
-          <a href="{% url 'category_page' %}">View Categories</a>
-       </div>
-
-        <div class="card">
-            <h2>Product API</h2>
-            <p>View product data</p>
-            <a href="{% url 'product_list' %}">Open API</a>
-        </div>
-    
-        <div style="margin-top: 40px;">
-
-    <h2>Quick Actions</h2>
-
-    <a href="{% url 'add_product' %}">
-        Add Product
-    </a>
-
-    &nbsp;&nbsp;
-
-    <a href="{% url 'category_page' %}">
-        Manage Categories
-    </a>
-
-    &nbsp;&nbsp;
-
-    <a href="{% url 'product_list' %}">
-        View Product API
-    </a>
-
-</div>
-
+       
+{% if user.is_authenticated %}
+    <a href="{% url 'dashboard' %}">Open Dashboard</a>
+{% endif %}
     </div>
 
 </body>
-
 </html>

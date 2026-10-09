@@ -1,8 +1,10 @@
-from django.shortcuts import render , redirect
+from django.shortcuts import render , redirect, get_object_or_404
 from django.db import IntegrityError
 from django.http import JsonResponse
-from .models import Product ,  Category ,Supplier ,RawMaterial ,Customer ,Enquiry ,Quotation
+from .models import Product ,  Category ,Supplier ,RawMaterial ,Customer ,Enquiry ,Quotation ,SalesOrder ,Production
+from django.contrib.auth.decorators import login_required, user_passes_test
 
+from django.contrib import messages
 
 def product_list(request):
     products = Product.objects.all()
@@ -107,15 +109,53 @@ def edit_product(request, product_id):
 
     return render(request, 'edit_product.html', {'product': product , 'categories': categories})
 
+
 def home(request):
+    return render(request, 'home.html')
+
+
+@login_required
+def dashboard(request):
     product_count = Product.objects.count()
     category_count = Category.objects.count()
 
-    return render(request, 'home.html', {
+    return render(request, 'dashboard.html', {
         'product_count': product_count,
         'category_count': category_count
     })
 
+
+@login_required
+def dashboard(request):
+    product_count = Product.objects.count()
+    category_count = Category.objects.count()
+    supplier_count = Supplier.objects.count()
+    raw_material_count = RawMaterial.objects.count()
+    customer_count = Customer.objects.count()
+    enquiry_count = Enquiry.objects.count()
+    quotation_count = Quotation.objects.count()
+    sales_order_count = SalesOrder.objects.count()
+
+    production_count = Production.objects.count()
+    pending_production_count = Production.objects.filter(
+        status='Pending'
+    ).count()
+
+    return render(request, 'dashboard.html', {
+        'product_count': product_count,
+        'category_count': category_count,
+        'supplier_count': supplier_count,
+        'raw_material_count': raw_material_count,
+        'customer_count': customer_count,
+        'enquiry_count': enquiry_count,
+        'quotation_count': quotation_count,
+        'sales_order_count': sales_order_count,
+        'production_count': production_count,
+        'pending_production_count': pending_production_count,
+    })
+
+
+    
 def category_page(request):
     categories = Category.objects.all()
 
@@ -447,3 +487,106 @@ def delete_quotation(request, quotation_id):
     quotation.delete()
 
     return redirect('quotation_page')
+
+@login_required
+def sales_order_page(request):
+    sales_orders = SalesOrder.objects.all()
+    return render(request, 'sales_order_page.html', {
+        'sales_orders': sales_orders
+    })
+ 
+@login_required
+def edit_sales_order(request, order_id):
+    order = get_object_or_404(SalesOrder, id=order_id)
+
+    if request.method == 'POST':
+        order.status = request.POST.get('status')
+        order.total_amount = request.POST.get('total_amount')
+        order.save()
+        messages.success(request, 'Sales order updated successfully!')
+        return redirect('sales_order_page')
+
+    return render(request, 'edit_sales_order.html', {
+        'order': order
+    })
+
+
+@login_required
+def delete_sales_order(request, order_id):
+    if request.method == 'POST':
+        order = get_object_or_404(SalesOrder, id=order_id)
+        order.delete()
+        messages.success(request, 'Sales order deleted successfully!')
+
+    return redirect('sales_order_page')
+
+
+@login_required
+def production_page(request):
+    productions = Production.objects.all()
+    return render(request, 'production_page.html', {
+        'productions': productions
+    })
+
+
+@login_required
+def add_production(request):
+    if request.method == 'POST':
+        production_number = request.POST.get('production_number')
+        product_id = request.POST.get('product')
+        quantity = request.POST.get('quantity')
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        status = request.POST.get('status')
+
+        Production.objects.create(
+            production_number=production_number,
+            product_id=product_id,
+            quantity=quantity,
+            start_date=start_date,
+            end_date=end_date or None,
+            status=status
+        )
+
+        messages.success(request, 'Production added successfully!')
+        return redirect('production_page')
+
+    products = Product.objects.all()
+    return render(request, 'add_production.html', {
+        'products': products
+    })
+
+
+@login_required
+def edit_production(request, production_id):
+    production = get_object_or_404(Production, id=production_id)
+
+    if request.method == 'POST':
+        production.production_number = request.POST.get('production_number')
+        production.product_id = request.POST.get('product')
+        production.quantity = request.POST.get('quantity')
+        production.start_date = request.POST.get('start_date')
+        production.end_date = request.POST.get('end_date') or None
+        production.status = request.POST.get('status')
+        production.save()
+
+        messages.success(request, 'Production updated successfully!')
+        return redirect('production_page')
+
+    products = Product.objects.all()
+    return render(request, 'edit_production.html', {
+        'production': production,
+        'products': products
+    })
+
+
+@login_required
+def delete_production(request, production_id):
+    production = get_object_or_404(Production, id=production_id)
+
+    if request.method == 'POST':
+        production.delete()
+        messages.success(request, 'Production deleted successfully!')
+        return redirect('production_page')
+
+    return redirect('production_page')

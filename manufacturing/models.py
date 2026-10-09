@@ -98,3 +98,47 @@ class Quotation(models.Model):
 
     def __str__(self):
         return self.quotation_number
+
+class SalesOrder(models.Model):
+    order_number = models.CharField(max_length=20, unique=True)
+    customer = models.ForeignKey(
+        Customer,
+        on_delete=models.CASCADE
+    )
+    quotation = models.ForeignKey(
+        Quotation,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    order_date = models.DateField(auto_now_add=True)
+    status = models.CharField(
+        max_length=20,
+        default='Pending'
+    )
+    total_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+
+    def __str__(self):
+        return self.order_number
+
+
+class Production(models.Model):
+    production_number = models.CharField(max_length=20, unique=True)
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE
+    )
+    quantity = models.PositiveIntegerField()
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+    status = models.CharField(
+        max_length=20,
+        default='Pending'
+    )
+
+    def __str__(self):
+        return self.production_number

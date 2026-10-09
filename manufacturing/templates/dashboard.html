@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manufacturing Management System - Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f1f5f9;
+        }
+
+        .header {
+            background: #263746;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            margin: 30px auto;
+        }
+
+        .summary {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            min-width: 180px;
+            box-shadow: 0 2px 6px #00000015;
+        }
+
+        .modules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px #00000015;
+        }
+
+        .card a {
+            display: inline-block;
+            background: #263746;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .card a:hover {
+            background: #40596e;
+        }
+
+        .topbar {
+            text-align: right;
+            padding: 12px 25px;
+            background: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="topbar">
+        Welcome, {{ user.username }}!
+        <form method="post" action="{% url 'logout' %}"
+              style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+
+    <div class="header">
+        <h1>Manufacturing Management System</h1>
+        <h2>Dashboard</h2>
+        <p>Manage your manufacturing operations</p>
+    </div>
+
+    <div class="container">
+
+        <h2>Overview</h2>
+
+        
+<div class="summary">
+    <div class="summary-card">
+        <h3>Total Products</h3>
+        <h2>{{ product_count }}</h2>
+    </div>
+
+    <div class="summary-card">
+        <h3>Total Categories</h3>
+        <h2>{{ category_count }}</h2>
+    </div>
+
+    <div class="summary-card">
+        <h3>Total Production</h3>
+        <h2>{{ production_count }}</h2>
+    </div>
+
+    <div class="summary-card">
+        <h3>Pending Production</h3>
+        <h2>{{ pending_production_count }}</h2>
+    </div>
+</div>
+
+
+        </div>
+
+        <h2>Management Modules</h2>
+
+        <div class="modules">
+
+            <div class="card">
+                <h3>Products</h3>
+                <p>Manage products, quantities and prices.</p>
+                <a href="{% url 'product_page' %}">View Products</a>
+            </div>
+
+            <div class="card">
+                <h3>Categories</h3>
+                <p>Manage product categories.</p>
+                <a href="{% url 'category_page' %}">View Categories</a>
+            </div>
+
+            <div class="card">
+                <h3>Suppliers</h3>
+                <p>Manage supplier information.</p>
+                <a href="{% url 'supplier_page' %}">View Suppliers</a>
+            </div>
+
+            <div class="card">
+                <h3>Raw Materials</h3>
+                <p>Manage raw material stock.</p>
+                <a href="{% url 'raw_material_page' %}">View Materials</a>
+            </div>
+
+            <div class="card">
+                <h3>Customers</h3>
+                <p>Manage customer information.</p>
+                <a href="{% url 'customer_page' %}">View Customers</a>
+            </div>
+
+            <div class="card">
+                <h3>Enquiries</h3>
+                <p>Manage customer enquiries.</p>
+                <a href="{% url 'enquiry_page' %}">View Enquiries</a>
+            </div>
+
+            <div class="card">
+                <h3>Quotations</h3>
+                <p>Manage quotations and their status.</p>
+                <a href="{% url 'quotation_page' %}">View Quotations</a>
+            </div>
+
+            
+<div class="card">
+    <h3>Sales Order Management</h3>
+    <p>Manage customer sales orders and their status.</p>
+    <a href="{% url 'sales_order_page' %}">View Sales Orders</a>
+</div>
+     
+
+<div class="card">
+    <h3>Production Management</h3>
+    <p>Manage production records and quantities.</p>
+    <a href="/api/production/">View Production</a>
+</div>
+        </div>
+    </div>
+
+</body>
+</html>

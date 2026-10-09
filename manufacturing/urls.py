@@ -55,4 +55,12 @@ path(
     views.delete_quotation,
     name='delete_quotation'
 ),
+path('sales-orders/', views.sales_order_page, name='sales_order_page'),
+path('sales-orders/edit/<int:order_id>/', views.edit_sales_order, name='edit_sales_order'),
+path('sales-orders/delete/<int:order_id>/', views.delete_sales_order, name='delete_sales_order'),
+path('production/', views.production_page, name='production_page'),
+
+path('add-production/', views.add_production, name='add_production'),
+path('edit-production/<int:production_id>/', views.edit_production, name='edit_production'),
+path('delete-production/<int:production_id>/', views.delete_production, name='delete_production'),
 ]
