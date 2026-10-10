@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dispatch Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            margin: 0;
+            padding: 30px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px #0001;
+        }
+        h1 { color: #1e3a5f; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background: #1e3a5f;
+            color: white;
+        }
+        tr:nth-child(even) { background: #f5f7fa; }
+
+        .button {
+    display: inline-block;
+    background: #1e3a5f;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 10px 8px 10px 0;
+}
+
+.button:hover {
+    background: #345b85;
+}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Dispatch Management</h1>
+    <p>Track dispatched quantities, transporters and delivery status.</p>
+    <a href="{% url 'add_dispatch' %}" class="button">
+    + Add Dispatch
+</a>
+
+<a href="{% url 'dashboard' %}" class="button">
+    Back to Dashboard
+</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Order Number</th>
+                <th>Dispatch Date</th>
+                <th>Transporter</th>
+                <th>Tracking Number</th>
+                <th>Quantity</th>
+                <th>Delivery Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in dispatches %}
+            <tr>
+                <td>{{ item.sales_order.order_number }}</td>
+                <td>{{ item.dispatch_date }}</td>
+                <td>{{ item.transporter }}</td>
+                <td>{{ item.tracking_number|default:"—" }}</td>
+                <td>{{ item.dispatched_quantity }}</td>
+                <td>{{ item.delivery_status }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No dispatch records available yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

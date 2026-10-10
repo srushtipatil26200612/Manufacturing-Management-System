@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quality Check</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            margin: 0;
+            padding: 30px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px #0001;
+        }
+        h1 { color: #1e3a5f; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background: #1e3a5f;
+            color: white;
+        }
+        tr:nth-child(even) { background: #f5f7fa; }
+        .empty { color: #666; padding: 20px 0; }
+        
+        .button {
+    display: inline-block;
+    background: #1e3a5f;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+.button:hover {
+    background: #345b85;
+}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Quality Check Management</h1>
+    <p>View production inspection results, accepted units and rejected units.</p>
+    <a href="{% url 'add_quality_check' %}" class="button">
+    + Add Quality Check
+</a>
+<a href="{% url 'dashboard' %}" class="button">
+    Back to Dashboard
+</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Production No.</th>
+                <th>Inspection Date</th>
+                <th>Inspected</th>
+                <th>Accepted</th>
+                <th>Rejected</th>
+                <th>Result</th>
+                <th>Corrective Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for check in quality_checks %}
+            <tr>
+                <td>{{ check.production.production_number }}</td>
+                <td>{{ check.inspection_date }}</td>
+                <td>{{ check.inspected_quantity }}</td>
+                <td>{{ check.accepted_quantity }}</td>
+                <td>{{ check.rejected_quantity }}</td>
+                <td>{{ check.result }}</td>
+                <td>{{ check.corrective_action|default:"—" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="empty">No quality checks recorded yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

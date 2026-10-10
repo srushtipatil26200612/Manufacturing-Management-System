@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Quality Check</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            padding: 30px;
+        }
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+        h1 { color: #1e3a5f; }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            margin-top: 6px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 11px 18px;
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        a { margin-left: 12px; }
+        .messages { color: #b42318; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Add Quality Check</h1>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label>Production</label>
+        <select name="production" required>
+            <option value="">Select Production</option>
+            {% for item in productions %}
+                <option value="{{ item.id }}">
+                    {{ item.production_number }} — {{ item.product.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label>Inspected Quantity</label>
+        <input type="number" name="inspected_quantity" min="1" required>
+
+        <label>Accepted Quantity</label>
+        <input type="number" name="accepted_quantity" min="0" required>
+
+        <label>Rejected Quantity</label>
+        <input type="number" name="rejected_quantity" min="0" required>
+
+        <label>Result</label>
+        <select name="result" required>
+            <option value="Pending">Pending</option>
+            <option value="Passed">Passed</option>
+            <option value="Failed">Failed</option>
+        </select>
+
+        <label>Corrective Action</label>
+        <textarea name="corrective_action" rows="4"></textarea>
+
+        <button type="submit">Save Quality Check</button>
+        <a href="{% url 'quality_check_page' %}">Back to Quality Checks</a>
+    </form>
+</div>
+</body>
+</html>

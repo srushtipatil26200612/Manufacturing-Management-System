@@ -1,10 +1,13 @@
 from django.shortcuts import render , redirect, get_object_or_404
+from decimal import Decimal, InvalidOperation
 from django.db import IntegrityError
 from django.http import JsonResponse
-from .models import Product ,  Category ,Supplier ,RawMaterial ,Customer ,Enquiry ,Quotation ,SalesOrder ,Production
+from .models import Product ,  Category ,Supplier ,RawMaterial ,Customer ,Enquiry ,Quotation ,SalesOrder ,Production ,QualityCheck ,Dispatch ,Invoice,Payment ,StockTransaction
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 from django.contrib import messages
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
 
 def product_list(request):
     products = Product.objects.all()
@@ -112,17 +115,6 @@ def edit_product(request, product_id):
 
 def home(request):
     return render(request, 'home.html')
-
-
-@login_required
-def dashboard(request):
-    product_count = Product.objects.count()
-    category_count = Category.objects.count()
-
-    return render(request, 'dashboard.html', {
-        'product_count': product_count,
-        'category_count': category_count
-    })
 
 
 @login_required
@@ -494,7 +486,38 @@ def sales_order_page(request):
     return render(request, 'sales_order_page.html', {
         'sales_orders': sales_orders
     })
- 
+
+@login_required
+def add_sales_order(request):
+    if request.method == 'POST':
+        order_number = request.POST.get('order_number')
+        customer_id = request.POST.get('customer')
+        quotation_id = request.POST.get('quotation')
+        status = request.POST.get('status')
+        total_amount = request.POST.get('total_amount')
+
+        if not order_number or not customer_id or not total_amount:
+            messages.error(request, 'Please fill all required fields.')
+            return redirect('add_sales_order')
+
+        SalesOrder.objects.create(
+            order_number=order_number,
+            customer_id=customer_id,
+            quotation_id=quotation_id or None,
+            status=status or 'Pending',
+            total_amount=total_amount
+        )
+        messages.success(request, 'Sales order added successfully!')
+        return redirect('sales_order_page')
+
+    customers = Customer.objects.all()
+    quotations = Quotation.objects.all()
+
+    return render(request, 'add_sales_order.html', {
+        'customers': customers,
+        'quotations': quotations
+    })
+
 @login_required
 def edit_sales_order(request, order_id):
     order = get_object_or_404(SalesOrder, id=order_id)
@@ -590,3 +613,314 @@ def delete_production(request, production_id):
         return redirect('production_page')
 
     return redirect('production_page')
+
+def register_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Registration successful!')
+            return redirect('dashboard')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'register.html', {'form': form})
+
+@login_required
+def quality_check_page(request):
+    quality_checks = QualityCheck.objects.select_related('production').all()
+
+    return render(request, 'quality_checks.html', {
+        'quality_checks': quality_checks
+    })
+
+
+@login_required
+def add_quality_check(request):
+    if request.method == 'POST':
+        production_id = request.POST.get('production')
+        inspected = int(request.POST.get('inspected_quantity', 0))
+        accepted = int(request.POST.get('accepted_quantity', 0))
+        rejected = int(request.POST.get('rejected_quantity', 0))
+        result = request.POST.get('result')
+        corrective_action = request.POST.get('corrective_action', '')
+
+        production = get_object_or_404(Production, id=production_id)
+
+        if inspected <= 0 or accepted < 0 or rejected < 0:
+            messages.error(request, 'Please enter valid quantities.')
+        elif accepted + rejected != inspected:
+            messages.error(
+                request,
+                'Accepted quantity plus rejected quantity must equal inspected quantity.'
+            )
+        else:
+            QualityCheck.objects.create(
+                production=production,
+                inspected_quantity=inspected,
+                accepted_quantity=accepted,
+                rejected_quantity=rejected,
+                result=result,
+                corrective_action=corrective_action
+            )
+            messages.success(request, 'Quality check added successfully.')
+            return redirect('quality_check_page')
+
+    productions = Production.objects.all()
+    return render(request, 'add_quality_check.html', {
+        'productions': productions
+    })
+
+@login_required
+def dispatch_page(request):
+    dispatches = Dispatch.objects.select_related('sales_order').all()
+
+    return render(request, 'dispatches.html', {
+        'dispatches': dispatches
+    })
+
+    
+@login_required
+def add_dispatch(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('sales_order')
+        dispatch_date = request.POST.get('dispatch_date')
+        transporter = request.POST.get('transporter', '').strip()
+        tracking_number = request.POST.get('tracking_number', '').strip()
+        quantity = request.POST.get('dispatched_quantity', 0)
+        delivery_status = request.POST.get('delivery_status', 'Pending')
+
+        if not transporter or not dispatch_date:
+            messages.error(request, 'Please enter the dispatch date and transporter.')
+        else:
+            try:
+                quantity = int(quantity)
+                if quantity <= 0:
+                    raise ValueError
+
+                order = get_object_or_404(SalesOrder, id=order_id)
+
+                Dispatch.objects.create(
+                    sales_order=order,
+                    dispatch_date=dispatch_date,
+                    transporter=transporter,
+                    tracking_number=tracking_number,
+                    dispatched_quantity=quantity,
+                    delivery_status=delivery_status
+                )
+                messages.success(request, 'Dispatch record added successfully.')
+                return redirect('dispatch_page')
+
+            except (ValueError, TypeError):
+                messages.error(request, 'Please enter a valid dispatched quantity.')
+
+    orders = SalesOrder.objects.all()
+    return render(request, 'add_dispatch.html', {
+        'orders': orders
+    })
+
+@login_required
+def invoice_page(request):
+    invoices = Invoice.objects.select_related('sales_order').all()
+
+    return render(request, 'invoices.html', {
+        'invoices': invoices
+    })
+
+
+@login_required
+def add_invoice(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('sales_order')
+        invoice_number = request.POST.get('invoice_number', '').strip()
+        invoice_date = request.POST.get('invoice_date')
+        total_amount = request.POST.get('total_amount', '0')
+        advance_amount = request.POST.get('advance_amount', '0')
+
+        try:
+            total_amount = Decimal(total_amount)
+            advance_amount = Decimal(advance_amount)
+
+            if not invoice_number or not invoice_date:
+                messages.error(request, 'Please fill all required fields.')
+            elif total_amount <= 0 or advance_amount < 0 or advance_amount > total_amount:
+                messages.error(request, 'Please enter valid invoice amounts.')
+            else:
+                order = get_object_or_404(SalesOrder, id=order_id)
+
+                if advance_amount == total_amount:
+                    status = 'Paid'
+                elif advance_amount > 0:
+                    status = 'Partially Paid'
+                else:
+                    status = 'Unpaid'
+
+                Invoice.objects.create(
+                    sales_order=order,
+                    invoice_number=invoice_number,
+                    invoice_date=invoice_date,
+                    total_amount=total_amount,
+                    advance_amount=advance_amount,
+                    status=status
+                )
+
+                messages.success(request, 'Invoice added successfully.')
+                return redirect('invoice_page')
+
+        except (InvalidOperation, ValueError, TypeError):
+            messages.error(request, 'Please enter valid invoice details.')
+
+        except IntegrityError:
+            messages.error(request, 'This invoice number already exists.')
+
+    orders = SalesOrder.objects.all()
+    return render(request, 'add_invoice.html', {'orders': orders})
+
+@login_required
+def payment_page(request):
+    payments = Payment.objects.select_related('invoice').all()
+    return render(request, 'payments.html', {'payments': payments})
+
+@login_required
+def add_payment(request):
+    if request.method == 'POST':
+        invoice_id = request.POST.get('invoice')
+        payment_date = request.POST.get('payment_date')
+        amount = request.POST.get('amount', '0')
+        payment_method = request.POST.get('payment_method')
+        reference_number = request.POST.get('reference_number', '').strip()
+
+        try:
+            amount = Decimal(amount)
+            invoice = get_object_or_404(Invoice, id=invoice_id)
+
+            if not payment_date:
+                messages.error(request, 'Please select payment date.')
+            elif amount <= 0:
+                messages.error(request, 'Payment amount must be greater than zero.')
+            elif amount > invoice.outstanding_balance:
+                messages.error(request, 'Payment amount cannot exceed outstanding balance.')
+            elif not payment_method:
+                messages.error(request, 'Please select a payment method.')
+            else:
+                Payment.objects.create(
+                    invoice=invoice,
+                    payment_date=payment_date,
+                    amount=amount,
+                    payment_method=payment_method,
+                    reference_number=reference_number
+                )
+
+                total_paid = invoice.advance_amount + sum(
+                    invoice.payments.values_list('amount', flat=True)
+                )
+
+                if total_paid >= invoice.total_amount:
+                    invoice.status = 'Paid'
+                elif total_paid > 0:
+                    invoice.status = 'Partially Paid'
+                else:
+                    invoice.status = 'Unpaid'
+
+                invoice.save()
+                messages.success(request, 'Payment added successfully.')
+                return redirect('payment_page')
+
+        except (InvalidOperation, ValueError, TypeError):
+            messages.error(request, 'Please enter valid payment details.')
+
+    invoices = Invoice.objects.all()
+    return render(request, 'add_payment.html', {'invoices': invoices})
+
+
+@login_required
+def reports_page(request):
+    context = {
+        'total_products': Product.objects.count(),
+        'total_customers': Customer.objects.count(),
+        'total_orders': SalesOrder.objects.count(),
+        'total_production': Production.objects.count(),
+        'total_enquiries': Enquiry.objects.count(),
+        'total_quotations': Quotation.objects.count(),
+        'total_dispatches': Dispatch.objects.count(),
+        'total_invoices': Invoice.objects.count(),
+        'total_payments': Payment.objects.count(),
+        'total_invoice_amount': sum(
+            Invoice.objects.values_list('total_amount', flat=True),
+            Decimal('0.00')
+        ),
+        'total_paid_advance': sum(
+            Invoice.objects.values_list('advance_amount', flat=True),
+            Decimal('0.00')
+        ),
+    }
+    return render(request, 'reports.html', context)
+
+
+@login_required
+def stock_transaction_page(request):
+    transactions = StockTransaction.objects.select_related(
+        'raw_material'
+    ).all().order_by('-transaction_date')
+
+    return render(
+        request,
+        'stock_transactions.html',
+        {'transactions': transactions}
+    )
+
+
+@login_required
+def add_stock_transaction(request):
+    raw_materials = RawMaterial.objects.all()
+
+    if request.method == 'POST':
+        material_id = request.POST.get('raw_material')
+        transaction_type = request.POST.get('transaction_type')
+        quantity_text = request.POST.get('quantity')
+        note = request.POST.get('note', '').strip()
+
+        try:
+            quantity = int(quantity_text)
+            material = RawMaterial.objects.get(id=material_id)
+
+            if quantity <= 0:
+                messages.error(request, 'Quantity must be greater than zero.')
+
+            elif transaction_type not in ['IN', 'OUT']:
+                messages.error(request, 'Select a valid transaction type.')
+
+            elif transaction_type == 'OUT' and quantity > material.quantity:
+                messages.error(request, 'Insufficient raw material stock.')
+
+            else:
+                StockTransaction.objects.create(
+                    raw_material=material,
+                    transaction_type=transaction_type,
+                    quantity=quantity,
+                    note=note
+                )
+
+                if transaction_type == 'IN':
+                    material.quantity += quantity
+                else:
+                    material.quantity -= quantity
+
+                material.save()
+                messages.success(request, 'Stock transaction added successfully.')
+                return redirect('stock_transaction_page')
+
+        except (ValueError, TypeError, RawMaterial.DoesNotExist):
+            messages.error(request, 'Please enter valid transaction details.')
+
+    return render(
+        request,
+        'add_stock_transaction.html',
+        {'raw_materials': raw_materials}
+    )
+

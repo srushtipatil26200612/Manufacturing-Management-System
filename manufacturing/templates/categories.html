@@ -66,16 +66,32 @@
         color: #2563eb;
         text-decoration: none;
     }
+    .button {
+    display: inline-block;
+    padding: 10px 16px;
+    margin: 10px 8px 15px 0;
+    background: #263746;
+    color: #ffffff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: #40596e;
+}
 </style>
 </head>
 
 <body>
 
     <h1>Product Categories</h1>
-    <a href="{% url 'add_category' %}">+ Add New Category</a>
-    <br><br>
-
-    <a href="{% url 'product_page' %}">← Back to Products</a>
+    <br>
+    <br>
+    <a href="{% url 'add_category' %}"  class="button">+ Add New Category</a>
+     <a href="{% url 'dashboard' %}" class="button">← Back to Dashboard</a>
     <br><br>
 
     <table border="1" cellpadding="10">

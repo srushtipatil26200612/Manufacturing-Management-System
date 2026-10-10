@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Payment</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #263746;
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.10);
+        }
+
+        h1 {
+            margin: 0 0 25px;
+            text-align: center;
+            color: #263746;
+            font-size: 27px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 7px;
+            font-weight: bold;
+            color: #334155;
+        }
+
+        input,
+        select {
+            display: block;
+            width: 100%;
+            padding: 11px 12px;
+            margin-top: 5px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #ffffff;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #40596e;
+            box-shadow: 0 0 4px rgba(64, 89, 110, 0.2);
+        }
+
+        button,
+        .button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 18px;
+            border: none;
+            border-radius: 6px;
+            background: #263746;
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover,
+        .button:hover {
+            background: #40596e;
+        }
+
+        .messages {
+            padding: 10px;
+            margin-bottom: 12px;
+            background: #e0f2fe;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 22px;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Add Payment</h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p class="messages">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label>Invoice</label>
+            <select name="invoice" required>
+                <option value="">Select Invoice</option>
+                {% for invoice in invoices %}
+                    <option value="{{ invoice.id }}">
+                        {{ invoice.invoice_number }} — Balance: {{ invoice.outstanding_balance }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label>Payment Date</label>
+            <input type="date" name="payment_date" required>
+
+            <label>Amount</label>
+            <input type="number" name="amount"
+                   min="0.01" step="0.01" required>
+
+            <label>Payment Method</label>
+            <select name="payment_method" required>
+                <option value="">Select Method</option>
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Cheque">Cheque</option>
+            </select>
+
+            <label>Reference Number (optional)</label>
+            <input type="text" name="reference_number">
+
+            <button type="submit">Save Payment</button>
+        </form>
+
+        <a href="{% url 'payment_page' %}" class="button">
+            ← Back to Payments
+        </a>
+
+        <a href="{% url 'dashboard' %}" class="button">
+            ← Back to Dashboard
+        </a>
+    </div>
+</body>
+</html>

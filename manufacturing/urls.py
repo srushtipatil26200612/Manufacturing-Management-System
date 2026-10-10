@@ -56,6 +56,7 @@ path(
     name='delete_quotation'
 ),
 path('sales-orders/', views.sales_order_page, name='sales_order_page'),
+path('sales-orders/add/', views.add_sales_order, name='add_sales_order'),
 path('sales-orders/edit/<int:order_id>/', views.edit_sales_order, name='edit_sales_order'),
 path('sales-orders/delete/<int:order_id>/', views.delete_sales_order, name='delete_sales_order'),
 path('production/', views.production_page, name='production_page'),
@@ -63,4 +64,26 @@ path('production/', views.production_page, name='production_page'),
 path('add-production/', views.add_production, name='add_production'),
 path('edit-production/<int:production_id>/', views.edit_production, name='edit_production'),
 path('delete-production/<int:production_id>/', views.delete_production, name='delete_production'),
+path('register/', views.register_view, name='register'),
+path('quality-checks/', views.quality_check_page, name='quality_check_page'),
+
+path('add-quality-check/', views.add_quality_check, name='add_quality_check'),
+
+path('dispatches/', views.dispatch_page, name='dispatch_page'),
+path('add-dispatch/', views.add_dispatch, name='add_dispatch'),
+path('invoices/', views.invoice_page, name='invoice_page'),
+path('add-invoice/', views.add_invoice, name='add_invoice'),
+path('payments/', views.payment_page, name='payment_page'),
+path('add-payment/', views.add_payment, name='add_payment'),
+path('reports/', views.reports_page, name='reports_page'),
+path(
+    'stock-transactions/',
+    views.stock_transaction_page,
+    name='stock_transaction_page'
+),
+path(
+    'add-stock-transaction/',
+    views.add_stock_transaction,
+    name='add_stock_transaction'
+),
 ]

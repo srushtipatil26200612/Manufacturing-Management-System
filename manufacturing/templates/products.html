@@ -67,6 +67,23 @@
         color: #2563eb;
         text-decoration: none;
     }
+    .button {
+    display: inline-block;
+    padding: 10px 16px;
+    margin: 10px 8px 15px 0;
+    background: #263746;
+    color: #ffffff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: #40596e;
+}
+
 </style>
 </head>
 
@@ -108,7 +125,8 @@
 
 <br>
 
-    <a href="{% url 'add_product' %}">+ Add New Product</a>
+    <a href="{% url 'add_product' %}"  class="button">+ Add New Product</a>
+    <a href="{% url 'dashboard' %}" class="button">← Back to Dashboard</a>
 <br><br>
 
     <table>

@@ -57,6 +57,18 @@
             color: red;
             text-align: center;
         }
+
+        .register-link {
+    text-align: center;
+    margin-top: 18px;
+}
+
+.register-link a {
+    color: #1e3a5f;
+    text-decoration: none;
+    font-weight: bold;
+}
+
     </style>
 </head>
 
@@ -80,6 +92,10 @@
 
             <button type="submit">Login</button>
         </form>
+        <p class="register-link">
+    Don't have an account?
+    <a href="{% url 'register' %}">Create Account</a>
+</p>
     </div>
 </body>
 </html>

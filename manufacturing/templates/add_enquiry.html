@@ -1,69 +1,157 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Enquiry</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #263746;
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.10);
+        }
+
+        h1 {
+            margin: 0 0 25px;
+            text-align: center;
+            color: #263746;
+            font-size: 27px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 7px;
+            font-weight: bold;
+            color: #334155;
+        }
+
+        input,
+        select,
+        textarea {
+            display: block;
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #ffffff;
+            font-family: Arial, sans-serif;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #40596e;
+            box-shadow: 0 0 4px rgba(64, 89, 110, 0.2);
+        }
+
+        button,
+        .button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 18px;
+            border: none;
+            border-radius: 6px;
+            background: #263746;
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover,
+        .button:hover {
+            background: #40596e;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 22px;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
 </head>
+
 <body>
+    <div class="container">
+        <h1>Add New Enquiry</h1>
 
-    <h1>Add New Enquiry</h1>
+        <form method="POST">
+            {% csrf_token %}
 
-    <form method="POST">
-        {% csrf_token %}
+            <label>Customer:</label>
+            <select name="customer" required>
+                <option value="">Select Customer</option>
+                {% for customer in customers %}
+                    <option value="{{ customer.id }}">
+                        {{ customer.name }}
+                    </option>
+                {% endfor %}
+            </select>
 
-        <label>Customer:</label><br>
-        <select name="customer" required>
-            <option value="">Select Customer</option>
+            <label>Product:</label>
+            <select name="product" required>
+                <option value="">Select Product</option>
+                {% for product in products %}
+                    <option value="{{ product.id }}">
+                        {{ product.name }}
+                    </option>
+                {% endfor %}
+            </select>
 
-            {% for customer in customers %}
-                <option value="{{ customer.id }}">
-                    {{ customer.name }}
-                </option>
-            {% endfor %}
-        </select>
+            <label>Quantity:</label>
+            <input type="number" name="quantity" min="1" required>
 
-        <br><br>
+            <label>Requirements:</label>
+            <textarea name="requirements" rows="4"></textarea>
 
-        <label>Product:</label><br>
-        <select name="product" required>
-            <option value="">Select Product</option>
+            <label>Status:</label>
+            <select name="status">
+                <option value="New">New</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Quoted">Quoted</option>
+                <option value="Closed">Closed</option>
+            </select>
 
-            {% for product in products %}
-                <option value="{{ product.id }}">
-                    {{ product.name }}
-                </option>
-            {% endfor %}
-        </select>
+            <button type="submit">Add Enquiry</button>
+        </form>
 
-        <br><br>
+        <a href="{% url 'enquiry_page' %}" class="button">
+            ← Back to Enquiries
+        </a>
 
-        <label>Quantity:</label><br>
-        <input type="number" name="quantity" min="1" required>
-
-        <br><br>
-
-        <label>Requirements:</label><br>
-        <textarea name="requirements" rows="4"></textarea>
-
-        <br><br>
-
-        <label>Status:</label><br>
-        <select name="status">
-            <option value="New">New</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Quoted">Quoted</option>
-            <option value="Closed">Closed</option>
-        </select>
-
-        <br><br>
-
-        <button type="submit">Add Enquiry</button>
-    </form>
-
-    <br>
-
-    <a href="{% url 'enquiry_page' %}">
-        ← Back to Enquiries
-    </a>
-
+        <a href="{% url 'dashboard' %}" class="button">
+            ← Back to Dashboard
+        </a>
+    </div>
 </body>
 </html>

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -69,6 +68,11 @@
             padding: 12px 25px;
             background: white;
         }
+
+        .topbar button {
+            padding: 7px 12px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -76,6 +80,7 @@
 
     <div class="topbar">
         Welcome, {{ user.username }}!
+
         <form method="post" action="{% url 'logout' %}"
               style="display:inline;">
             {% csrf_token %}
@@ -93,29 +98,27 @@
 
         <h2>Overview</h2>
 
-        
-<div class="summary">
-    <div class="summary-card">
-        <h3>Total Products</h3>
-        <h2>{{ product_count }}</h2>
-    </div>
+        <div class="summary">
 
-    <div class="summary-card">
-        <h3>Total Categories</h3>
-        <h2>{{ category_count }}</h2>
-    </div>
+            <div class="summary-card">
+                <h3>Total Products</h3>
+                <h2>{{ product_count }}</h2>
+            </div>
 
-    <div class="summary-card">
-        <h3>Total Production</h3>
-        <h2>{{ production_count }}</h2>
-    </div>
+            <div class="summary-card">
+                <h3>Total Categories</h3>
+                <h2>{{ category_count }}</h2>
+            </div>
 
-    <div class="summary-card">
-        <h3>Pending Production</h3>
-        <h2>{{ pending_production_count }}</h2>
-    </div>
-</div>
+            <div class="summary-card">
+                <h3>Total Production</h3>
+                <h2>{{ production_count }}</h2>
+            </div>
 
+            <div class="summary-card">
+                <h3>Pending Production</h3>
+                <h2>{{ pending_production_count }}</h2>
+            </div>
 
         </div>
 
@@ -148,6 +151,14 @@
             </div>
 
             <div class="card">
+                <h3>Stock Transactions</h3>
+                <p>Track raw material stock received and issued.</p>
+                <a href="{% url 'stock_transaction_page' %}">
+                    View Stock Transactions
+                </a>
+            </div>
+
+            <div class="card">
                 <h3>Customers</h3>
                 <p>Manage customer information.</p>
                 <a href="{% url 'customer_page' %}">View Customers</a>
@@ -165,19 +176,52 @@
                 <a href="{% url 'quotation_page' %}">View Quotations</a>
             </div>
 
-            
-<div class="card">
-    <h3>Sales Order Management</h3>
-    <p>Manage customer sales orders and their status.</p>
-    <a href="{% url 'sales_order_page' %}">View Sales Orders</a>
-</div>
-     
+            <div class="card">
+                <h3>Sales Order Management</h3>
+                <p>Manage customer sales orders and their status.</p>
+                <a href="{% url 'sales_order_page' %}">
+                    View Sales Orders
+                </a>
+            </div>
 
-<div class="card">
-    <h3>Production Management</h3>
-    <p>Manage production records and quantities.</p>
-    <a href="/api/production/">View Production</a>
-</div>
+            <div class="card">
+                <h3>Production Management</h3>
+                <p>Manage production records and quantities.</p>
+                <a href="/api/production/">View Production</a>
+            </div>
+
+            <div class="card">
+                <h3>Quality Checks</h3>
+                <p>Track inspection results and rejected quantities.</p>
+                <a href="{% url 'quality_check_page' %}">
+                    View Quality Checks
+                </a>
+            </div>
+
+            <div class="card">
+                <h3>Dispatch Management</h3>
+                <p>Track deliveries, transporters and dispatch status.</p>
+                <a href="{% url 'dispatch_page' %}">View Dispatches</a>
+            </div>
+
+            <div class="card">
+                <h3>Invoice Management</h3>
+                <p>Manage invoices and outstanding balances.</p>
+                <a href="{% url 'invoice_page' %}">View Invoices</a>
+            </div>
+
+            <div class="card">
+                <h3>Payment Management</h3>
+                <p>Record customer payments and payment methods.</p>
+                <a href="{% url 'payment_page' %}">View Payments</a>
+            </div>
+
+            <div class="card">
+                <h3>Business Reports</h3>
+                <p>View manufacturing, sales and payment summaries.</p>
+                <a href="{% url 'reports_page' %}">View Reports</a>
+            </div>
+
         </div>
     </div>
 

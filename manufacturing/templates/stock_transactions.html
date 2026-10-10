@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Transactions</title>
+    <style>
+        body { font-family: Arial; margin: 30px; background: #f5f5f5; }
+        h1 { color: #222; }
+        a, button { padding: 8px 12px; text-decoration: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background: #333; color: white; }
+        .button {
+    display: inline-block;
+    padding: 10px 16px;
+    margin: 10px 8px 15px 0;
+    background: #263746;
+    color: #ffffff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: #40596e;
+}
+    </style>
+</head>
+<body>
+    <h1>Stock Transactions</h1>
+     <br>
+     <br>
+    <a href="{% url 'add_stock_transaction' %}"  class="button" >+ Add Stock Transaction</a>
+    <a href="{% url 'dashboard' %}" class="button">← Back to Dashboard</a>
+    <br> <br>
+     </be>
+    <table>
+        <tr>
+            <th>Raw Material</th>
+            <th>Type</th>
+            <th>Quantity</th>
+            <th>Date</th>
+            <th>Note</th>
+        </tr>
+        {% for transaction in transactions %}
+        <tr>
+            <td>{{ transaction.raw_material.name }}</td>
+            <td>{{ transaction.get_transaction_type_display }}</td>
+            <td>{{ transaction.quantity }}</td>
+            <td>{{ transaction.transaction_date }}</td>
+            <td>{{ transaction.note }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No stock transactions available.</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

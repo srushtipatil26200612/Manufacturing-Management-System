@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Sales Order</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6f9;
+            margin: 40px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            box-sizing: border-box;
+        }
+        button, .back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 16px;
+            background: #263746;
+            color: white;
+            border: none;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Add Sales Order</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Order Number *</label>
+        <input type="text" name="order_number" required>
+
+        <label>Customer *</label>
+        <select name="customer" required>
+            <option value="">Select Customer</option>
+            {% for customer in customers %}
+            <option value="{{ customer.id }}">{{ customer }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Quotation (Optional)</label>
+        <select name="quotation">
+            <option value="">Select Quotation</option>
+            {% for quotation in quotations %}
+            <option value="{{ quotation.id }}">{{ quotation }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Status</label>
+        <select name="status">
+            <option value="Pending">Pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
+
+        <label>Total Amount *</label>
+        <input type="number" name="total_amount" min="0" step="0.01" required>
+
+        <button type="submit">Save Sales Order</button>
+    </form>
+
+    <a class="back" href="{% url 'sales_order_page' %}">Back to Sales Orders</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payments</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f5f5f5;
+        }
+        h1 { color: #222; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background: #333;
+            color: white;
+        }
+        .button {
+    display: inline-block;
+    padding: 10px 16px;
+    margin: 10px 8px 15px 0;
+    background: #263746;
+    color: #ffffff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: #40596e;
+}
+    </style>
+</head>
+<body>
+    <h1>Manufacturing Management System</h1>
+    <h2>Payments</h2>
+
+    <a href="{% url 'add_payment' %}" class="button">+ Add Payment</a>
+     <a href="{% url 'dashboard' %}" class="button">← Back to Dashboard</a>
+
+    <table>
+        <tr>
+            <th>Invoice Number</th>
+            <th>Payment Date</th>
+            <th>Amount</th>
+            <th>Payment Method</th>
+            <th>Reference Number</th>
+        </tr>
+
+        {% for payment in payments %}
+        <tr>
+            <td>{{ payment.invoice.invoice_number }}</td>
+            <td>{{ payment.payment_date }}</td>
+            <td>{{ payment.amount }}</td>
+            <td>{{ payment.payment_method }}</td>
+            <td>{{ payment.reference_number }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No payments recorded.</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

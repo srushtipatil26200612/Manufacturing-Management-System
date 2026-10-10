@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Dispatch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            padding: 30px;
+        }
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px #0001;
+        }
+        h1 { color: #1e3a5f; }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            margin-top: 6px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 11px 18px;
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        a { margin-left: 12px; }
+        .messages { color: #b42318; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Add Dispatch Record</h1>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label>Sales Order</label>
+        <select name="sales_order" required>
+            <option value="">Select Sales Order</option>
+            {% for order in orders %}
+                <option value="{{ order.id }}">
+                    {{ order.order_number }} — {{ order.customer.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label>Dispatch Date</label>
+        <input type="date" name="dispatch_date" required>
+
+        <label>Transporter</label>
+        <input type="text" name="transporter" required>
+
+        <label>Tracking Number</label>
+        <input type="text" name="tracking_number">
+
+        <label>Dispatched Quantity</label>
+        <input type="number" name="dispatched_quantity" min="1" required>
+
+        <label>Delivery Status</label>
+        <select name="delivery_status" required>
+            <option value="Pending">Pending</option>
+            <option value="Dispatched">Dispatched</option>
+            <option value="In Transit">In Transit</option>
+            <option value="Delivered">Delivered</option>
+        </select>
+
+        <button type="submit">Save Dispatch</button>
+        <a href="{% url 'dispatch_page' %}">Back to Dispatches</a>
+    </form>
+</div>
+</body>
+</html>

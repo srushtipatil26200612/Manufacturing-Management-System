@@ -1,48 +1,137 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add Product</title>
+    <title>Add New Product</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #243447;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 550px;
+            margin: 20px auto;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin: 0 0 25px;
+            text-align: center;
+            color: #1e3a5f;
+            font-size: 27px;
+        }
+
+        label {
+            display: block;
+            margin: 16px 0 7px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #ffffff;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .error {
+            padding: 10px;
+            color: #b91c1c;
+            background: #fee2e2;
+            border-radius: 6px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 13px;
+            border: none;
+            border-radius: 6px;
+            background: #1e3a5f;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #294f7a;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #1d4ed8;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body>
+    <div class="container">
+        <h1>Add New Product</h1>
 
-    <h1>Add New Product</h1>
-    {% if error %}
-    <p style="color: red;">{{ error }}</p>
-{% endif %}
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
 
-    <form method="POST">
-        {% csrf_token %}
+        <form method="POST">
+            {% csrf_token %}
 
-        <label>Product Name:</label><br>
-        <input type="text" name="name" required><br><br>
+            <label for="name">Product Name</label>
+            <input type="text" id="name" name="name" required>
 
-        <label>Product Code:</label><br>
-        <input type="text" name="product_code" required><br><br>
-         
-        <label>Category:</label><br>
+            <label for="product_code">Product Code</label>
+            <input type="text" id="product_code" name="product_code" required>
 
-<select name="category" required>
-    <option value="">Select Category</option>
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+                <option value="">Select Category</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
 
-    {% for category in categories %}
-        <option value="{{ category.id }}">
-            {{ category.name }}
-        </option>
-    {% endfor %}
-</select>
+            <label for="quantity">Quantity</label>
+            <input type="number" id="quantity" name="quantity" min="0" required>
 
-<br><br> 
+            <label for="price">Price (₹)</label>
+            <input type="number" id="price" name="price" step="0.01" min="0" required>
 
-        <label>Quantity:</label><br>
-       <input type="number" name="quantity" min="0" required>
+            <button type="submit">Add Product</button>
+        </form>
 
-        <label>Price:</label><br>
-        <input type="number" step="0.01" min="0" name="price" required>
-        <button type="submit">Add Product</button>
-    </form>
-    <br>
-<a href="{% url 'product_page' %}">← Back to Products</a>
-
+        <a class="back-link" href="{% url 'product_page' %}">← Back to Products</a>
+    </div>
 </body>
 </html>

@@ -66,18 +66,33 @@
         color: #2563eb;
         text-decoration: none;
     }
+    .button {
+    display: inline-block;
+    padding: 10px 16px;
+    margin: 10px 8px 15px 0;
+    background: #263746;
+    color: #ffffff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: #40596e;
+}
 </style>
 </head>
 
 <body>
 
     <h1>Supplier Management</h1>
+    <br>
+    <br>
+   <a href="{% url 'add_supplier' %}"  class="button">+ Add New Supplier</a>
+    <a href="{% url 'home' %}"  class="button">← Back to Dashboard</a>
 
-    <a href="{% url 'home' %}">← Back to Dashboard</a>
-
-    <br><br>
-
-   <a href="{% url 'add_supplier' %}">+ Add New Supplier</a>
     <br><br>
 
     <table border="1" cellpadding="10">

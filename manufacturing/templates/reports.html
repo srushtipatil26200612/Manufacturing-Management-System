@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manufacturing Reports</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f5f5f5;
+        }
+        h1 { color: #222; }
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px #ddd;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #444;
+        }
+        .number {
+            font-size: 26px;
+            font-weight: bold;
+            color: #176b87;
+        }
+        a { color: #176b87; }
+    </style>
+</head>
+<body>
+    <h1>Manufacturing Management System</h1>
+    <h2>Business Reports</h2>
+
+    <div class="report-grid">
+        <div class="card">
+            <h3>Total Products</h3>
+            <p class="number">{{ total_products }}</p>
+        </div>
+        <div class="card">
+            <h3>Total Customers</h3>
+            <p class="number">{{ total_customers }}</p>
+        </div>
+        <div class="card">
+            <h3>Sales Orders</h3>
+            <p class="number">{{ total_orders }}</p>
+        </div>
+        <div class="card">
+            <h3>Production Records</h3>
+            <p class="number">{{ total_production }}</p>
+        </div>
+        <div class="card">
+            <h3>Enquiries</h3>
+            <p class="number">{{ total_enquiries }}</p>
+        </div>
+        <div class="card">
+            <h3>Quotations</h3>
+            <p class="number">{{ total_quotations }}</p>
+        </div>
+        <div class="card">
+            <h3>Dispatch Records</h3>
+            <p class="number">{{ total_dispatches }}</p>
+        </div>
+        <div class="card">
+            <h3>Invoices</h3>
+            <p class="number">{{ total_invoices }}</p>
+        </div>
+        <div class="card">
+            <h3>Payment Records</h3>
+            <p class="number">{{ total_payments }}</p>
+        </div>
+        <div class="card">
+            <h3>Total Invoice Amount</h3>
+            <p class="number">₹{{ total_invoice_amount }}</p>
+        </div>
+        <div class="card">
+            <h3>Total Advance Received</h3>
+            <p class="number">₹{{ total_paid_advance }}</p>
+        </div>
+    </div>
+
+    <p><a href="/">Back to Home</a></p>
+</body>
+</html>
