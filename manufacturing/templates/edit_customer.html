@@ -1,43 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Edit Customer</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f3f6f9;
+            color: #263746;
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.10);
+        }
+
+        h1 {
+            margin: 0 0 25px;
+            text-align: center;
+            color: #1e3a5f;
+            font-size: 27px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: Arial, sans-serif;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #1e3a5f;
+        }
+
+        button,
+        .back-btn {
+            display: block;
+            width: 100%;
+            margin-top: 18px;
+            padding: 12px;
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover,
+        .back-btn:hover {
+            background: #304f70;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 22px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1>Edit Customer</h1>
+    <div class="container">
 
-    <form method="POST">
-        {% csrf_token %}
+        <h1>Edit Customer</h1>
 
-        <label>Customer Name:</label><br>
-        <input type="text" name="name" value="{{ customer.name }}" required>
+        <form method="POST">
+            {% csrf_token %}
 
-        <br><br>
+            <label for="name">Customer Name:</label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{ customer.name }}"
+                required
+            >
 
-        <label>Email:</label><br>
-        <input type="email" name="email" value="{{ customer.email }}">
+            <label for="email">Email:</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{ customer.email }}"
+            >
 
-        <br><br>
+            <label for="phone">Phone:</label>
+            <input
+                type="text"
+                id="phone"
+                name="phone"
+                value="{{ customer.phone }}"
+                required
+            >
 
-        <label>Phone:</label><br>
-        <input type="text" name="phone" value="{{ customer.phone }}" required>
+            <label for="address">Address:</label>
+            <textarea
+                id="address"
+                name="address"
+                rows="4"
+            >{{ customer.address }}</textarea>
 
-        <br><br>
+            <button type="submit">Update Customer</button>
 
-        <label>Address:</label><br>
-        <textarea name="address" rows="4">{{ customer.address }}</textarea>
+        </form>
 
-        <br><br>
+        <a href="{% url 'customer_page' %}" class="back-btn">
+            ← Back to Customers
+        </a>
 
-        <button type="submit">Update Customer</button>
-    </form>
-
-    <br>
-
-    <a href="{% url 'customer_page' %}">
-        ← Back to Customers
-    </a>
+    </div>
 
 </body>
 </html>

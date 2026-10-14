@@ -1,77 +1,383 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manufacturing Management System</title>
+
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            background: #f5f5f5;
+            background: #f4f7fb;
+            color: #263746;
+            line-height: 1.6;
         }
 
-        .header {
-            background: #263746;
-            color: white;
-            padding: 50px 20px;
-            text-align: center;
-        }
-
-        .container {
-            text-align: center;
-            margin: 70px auto;
-        }
-
-        .container a {
-            display: inline-block;
-            padding: 13px 25px;
-            margin: 10px;
-            background: #263746;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .container a:hover {
-            background: #40596e;
-        }
-
+        /* Navigation Bar */
         .topbar {
-            text-align: right;
-            padding: 15px;
+            min-height: 76px;
+            padding: 15px 7%;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            box-shadow: 0 3px 18px rgba(20, 40, 60, 0.08);
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: bold;
+            color: #263746;
+        }
+
+        .brand span {
+            color: #1687e8;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .welcome {
+            font-size: 14px;
+            color: #526477;
+        }
+
+        .login-btn,
+        .logout-btn {
+            border: none;
+            cursor: pointer;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .login-btn {
+            color: white;
+            background: #1687e8;
+        }
+
+        .logout-btn {
+            color: #263746;
+            background: #e9eff6;
+        }
+
+        .login-btn:hover {
+            background: #096dc3;
+        }
+
+        .logout-btn:hover {
+            background: #d8e3ef;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 85px 7% 95px;
+            background: linear-gradient(120deg, #172b3d, #263f58 60%, #176da7);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 850px;
+            margin: auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 7px 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.08);
+            border-radius: 30px;
+            color: #b9e2ff;
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            line-height: 1.2;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 span {
+            color: #67c1ff;
+        }
+
+        .hero p {
+            max-width: 690px;
+            margin: 0 auto;
+            color: #e0eaf3;
+            font-size: 17px;
+        }
+
+        .hero-actions {
+            margin-top: 32px;
+        }
+
+        .primary-btn,
+        .secondary-btn {
+            display: inline-block;
+            padding: 14px 25px;
+            margin: 7px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .primary-btn {
+            background: #1687e8;
+            color: white;
+            box-shadow: 0 7px 18px rgba(0,0,0,0.15);
+        }
+
+        .primary-btn:hover {
+            background: #0873cf;
+            transform: translateY(-2px);
+        }
+
+        .secondary-btn {
+            color: white;
+            border: 1px solid rgba(255,255,255,0.45);
+        }
+
+        .secondary-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Features */
+        .features {
+            max-width: 1150px;
+            margin: auto;
+            padding: 65px 25px 75px;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .section-heading h2 {
+            font-size: 30px;
+            margin-bottom: 8px;
+            color: #203448;
+        }
+
+        .section-heading p {
+            color: #718096;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .feature-card {
             background: white;
+            padding: 28px 24px;
+            border: 1px solid #e6edf5;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(30, 55, 80, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 13px 30px rgba(30, 55, 80, 0.11);
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e8f4ff;
+            border-radius: 13px;
+            font-size: 25px;
+            margin-bottom: 18px;
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 24px;
+            text-align: center;
+            background: #172b3d;
+            color: #dce6ef;
+            font-size: 13px;
+        }
+
+        @media (max-width: 800px) {
+            .card-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .hero {
+                padding: 65px 6%;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 18px 5%;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+            }
+
+            .hero p {
+                font-size: 15px;
+            }
+
+            .section-heading h2 {
+                font-size: 25px;
+            }
         }
     </style>
 </head>
+
 <body>
 
-    <div class="topbar">
-        {% if user.is_authenticated %}
-            Welcome, {{ user.username }}!
-            <form method="post" action="{% url 'logout' %}"
-                  style="display:inline;">
-                {% csrf_token %}
-                <button type="submit">Logout</button>
-            </form>
-        {% else %}
-            <a href="{% url 'login' %}">Admin Login</a>
-        {% endif %}
-    </div>
+    <nav class="topbar">
+        <div class="brand">⚙ Manu<span>Flow</span></div>
 
-    <div class="header">
-        <h1>Manufacturing Management System</h1>
-        <p>Manage products, categories and manufacturing operations efficiently.</p>
-    </div>
+        <div class="user-area">
+            {% if user.is_authenticated %}
+                <span class="welcome">
+                    Welcome, {{ user.username }}!
+                </span>
 
-    <div class="container">
-        <h2>Welcome to Our System</h2>
-        <p>Manage your manufacturing activities in one place.</p>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">
+                        Logout
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="login-btn">
+                    Admin Login
+                </a>
+            {% endif %}
+        </div>
+    </nav>
 
-       
-{% if user.is_authenticated %}
-    <a href="{% url 'dashboard' %}">Open Dashboard</a>
-{% endif %}
-    </div>
+    <header class="hero">
+        <div class="hero-content">
+            <div class="eyebrow">SMART MANUFACTURING MANAGEMENT</div>
+
+            <h1>
+                Manage Your Factory.<br>
+                <span>Smarter. Faster. Better.</span>
+            </h1>
+
+            <p>
+                A centralized platform to manage products, inventory,
+                production, orders and business operations efficiently.
+            </p>
+
+            <div class="hero-actions">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="primary-btn">
+                        Open Dashboard &rarr;
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="primary-btn">
+                        Admin Login &rarr;
+                    </a>
+                {% endif %}
+
+                <a href="#features" class="secondary-btn">
+                    Explore Features
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="features" id="features">
+        <div class="section-heading">
+            <h2>Everything in One Place</h2>
+            <p>Manage your key manufacturing activities from one system.</p>
+        </div>
+
+        <div class="card-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📦</div>
+                <h3>Product Management</h3>
+                <p>Organize products, categories and product information.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🏭</div>
+                <h3>Production Operations</h3>
+                <p>Keep production activities and quality checks organized.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Inventory Tracking</h3>
+                <p>Monitor raw materials and stock transactions efficiently.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Customer & Supplier</h3>
+                <p>Maintain customer, supplier and enquiry records.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🧾</div>
+                <h3>Orders & Invoices</h3>
+                <p>Organize sales orders, quotations and invoices.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3>Business Reports</h3>
+                <p>View business information to support daily operations.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2026 Manufacturing Management System.
+        Built for efficient manufacturing operations.
+    </footer>
 
 </body>
 </html>

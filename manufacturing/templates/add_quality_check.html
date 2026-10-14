@@ -28,16 +28,45 @@
             padding: 10px;
             margin-top: 6px;
         }
-        button {
-            margin-top: 20px;
-            padding: 11px 18px;
-            background: #1e3a5f;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        a { margin-left: 12px; }
-        .messages { color: #b42318; }
+        
+button {
+    margin-top: 20px;
+    padding: 12px 18px;
+    width: 100%;
+    box-sizing: border-box;
+    background: #1e3a5f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #304f70;
+}
+
+.back-btn {
+    display: block;
+    margin-top: 12px;
+    padding: 12px 18px;
+    width: 100%;
+    box-sizing: border-box;
+    background: #1e3a5f;
+    color: white;
+    border-radius: 4px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.back-btn:hover {
+    background: #304f70;
+}
+
     </style>
 </head>
 <body>
@@ -85,7 +114,10 @@
         <textarea name="corrective_action" rows="4"></textarea>
 
         <button type="submit">Save Quality Check</button>
-        <a href="{% url 'quality_check_page' %}">Back to Quality Checks</a>
+
+<a href="{% url 'quality_check_page' %}" class="back-btn">
+    ← Back to Quality Checks
+</a>
     </form>
 </div>
 </body>

@@ -1,102 +1,169 @@
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <title>Quotations</title>
-    
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f1f5f9;
-        margin: 0;
-        padding: 30px;
-        color: #1e293b;
-    }
 
-    h1 {
-        color: #1e3a8a;
-        margin-bottom: 20px;
-    }
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px #00000015;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 30px;
+            color: #1e293b;
+        }
 
-    th, td {
-        padding: 12px 15px;
-        border: 1px solid #e2e8f0;
-        text-align: left;
-    }
+        h1 {
+            color: #1e3a8a;
+            margin-bottom: 20px;
+        }
 
-    th {
-        background: #263746;
-        color: white;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px #00000015;
+        }
 
-    tr:nth-child(even) {
-        background: #f8fafc;
-    }
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+        }
 
-    input, select {
-        padding: 9px;
-        margin: 5px;
-        border: 1px solid #cbd5e1;
-        border-radius: 5px;
-    }
+        th {
+            background: #263746;
+            color: white;
+        }
 
-    button, input[type="submit"] {
-        background: #263746;
-        color: white;
-        padding: 10px 16px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
 
-    button:hover, input[type="submit"]:hover {
-        background: #40596e;
-    }
+        input, select {
+            padding: 9px;
+            margin: 5px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+        }
 
-    a {
-        color: #2563eb;
-        text-decoration: none;
-    }
-    .button {
-    display: inline-block;
-    padding: 10px 16px;
-    margin: 10px 8px 15px 0;
-    background: #263746;
-    color: #ffffff;
-    text-decoration: none;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-}
+        button, input[type="submit"] {
+            background: #263746;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-.button:hover {
-    background: #40596e;
-}
-</style>
+        button:hover, input[type="submit"]:hover {
+            background: #40596e;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 16px;
+            margin: 10px 8px 15px 0;
+            background: #263746;
+            color: white;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .button:hover {
+            background: #40596e;
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .action-btn {
+            display: inline-block;
+            padding: 7px 14px;
+            border-radius: 5px;
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .edit-btn {
+            background: #2563eb;
+        }
+
+        .edit-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .delete-btn {
+            background: #dc2626;
+        }
+
+        .delete-btn:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .action-buttons {
+                gap: 5px;
+            }
+
+            .action-btn {
+                padding: 6px 9px;
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
     <h1>Quotation Management</h1>
 
-    <a href="{% url 'add_quotation' %}" class="button">Add New Quotation</a>
-    <a href="{% url 'dashboard' %}" class="button">← Back to Dashboard</a>
+    <a href="{% url 'add_quotation' %}" class="button">
+        + Add New Quotation
+    </a>
 
+    <a href="{% url 'dashboard' %}" class="button">
+        ← Back to Dashboard
+    </a>
 
     <br><br>
 
-    <table border="1" cellpadding="10">
-
+    <table>
         <tr>
             <th>Sr. No.</th>
             <th>ID</th>
@@ -112,42 +179,45 @@
         </tr>
 
         {% for quotation in quotations %}
-
         <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ quotation.id }}</td>
             <td>{{ quotation.enquiry }}</td>
             <td>{{ quotation.quotation_number }}</td>
             <td>{{ quotation.quantity }}</td>
-            <td>{{ quotation.price }}</td>
+            <td>₹{{ quotation.price }}</td>
             <td>{{ quotation.lead_time }}</td>
             <td>{{ quotation.version }}</td>
             <td>{{ quotation.status }}</td>
             <td>{{ quotation.created_at }}</td>
 
             <td>
-                <a href="{% url 'edit_quotation' quotation.id %}">
-                    Edit
-                </a>
-                |
-                <a href="{% url 'delete_quotation' quotation.id %}"
-                   onclick="return confirm('Are you sure you want to delete this quotation?');">
-                    Delete
-                </a>
+                <div class="action-buttons">
+
+                    <a href="{% url 'edit_quotation' quotation.id %}"
+                       class="action-btn edit-btn">
+                        Edit
+                    </a>
+
+                    <a href="{% url 'delete_quotation' quotation.id %}"
+                       class="action-btn delete-btn"
+                       onclick="return confirm('Are you sure you want to delete this quotation?');">
+                        Delete
+                    </a>
+
+                </div>
             </td>
         </tr>
 
         {% empty %}
-
         <tr>
-            <td colspan="11">No Quotations Found</td>
+            <td colspan="11" style="text-align: center;">
+                No Quotations Found
+            </td>
         </tr>
-
         {% endfor %}
 
     </table>
 
 </body>
-
 </html>
-

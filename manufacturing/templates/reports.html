@@ -1,88 +1,206 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>Manufacturing Reports</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            margin: 30px;
-            background: #f5f5f5;
+            margin: 0;
+            padding: 30px;
+            background: #f1f5f9;
+            color: #1e293b;
         }
-        h1 { color: #222; }
+
+        .header {
+            background: #263746;
+            color: white;
+            padding: 25px 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px #00000015;
+        }
+
+        .header h1 {
+            margin: 0 0 10px;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #dbeafe;
+            font-size: 15px;
+        }
+
+        h2 {
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            font-size: 23px;
+        }
+
         .report-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 18px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
         }
+
         .card {
+            position: relative;
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px #ddd;
+            padding: 24px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            border-left: 5px solid #2563eb;
+            box-shadow: 0 3px 10px #00000008;
+            transition: transform 0.25s, box-shadow 0.25s;
         }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px #00000012;
+        }
+
         .card h3 {
-            margin-top: 0;
-            color: #444;
+            margin: 0 0 18px;
+            color: #475569;
+            font-size: 16px;
+            font-weight: 600;
         }
+
         .number {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: bold;
             color: #176b87;
+            margin: 0;
+            overflow-wrap: anywhere;
         }
-        a { color: #176b87; }
+
+        .footer {
+            margin-top: 30px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: #263746;
+            color: white;
+            text-decoration: none;
+            padding: 11px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .back-button:hover {
+            background: #40596e;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .report-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
     </style>
 </head>
+
 <body>
-    <h1>Manufacturing Management System</h1>
+
+    <div class="header">
+        <h1>Manufacturing Management System</h1>
+        <p>Business Reports &amp; Performance Overview</p>
+    </div>
+
     <h2>Business Reports</h2>
 
     <div class="report-grid">
+
         <div class="card">
             <h3>Total Products</h3>
             <p class="number">{{ total_products }}</p>
         </div>
+
         <div class="card">
             <h3>Total Customers</h3>
             <p class="number">{{ total_customers }}</p>
         </div>
+
         <div class="card">
             <h3>Sales Orders</h3>
             <p class="number">{{ total_orders }}</p>
         </div>
+
         <div class="card">
             <h3>Production Records</h3>
             <p class="number">{{ total_production }}</p>
         </div>
+
         <div class="card">
             <h3>Enquiries</h3>
             <p class="number">{{ total_enquiries }}</p>
         </div>
+
         <div class="card">
             <h3>Quotations</h3>
             <p class="number">{{ total_quotations }}</p>
         </div>
+
         <div class="card">
             <h3>Dispatch Records</h3>
             <p class="number">{{ total_dispatches }}</p>
         </div>
+
         <div class="card">
             <h3>Invoices</h3>
             <p class="number">{{ total_invoices }}</p>
         </div>
+
         <div class="card">
             <h3>Payment Records</h3>
             <p class="number">{{ total_payments }}</p>
         </div>
+
         <div class="card">
             <h3>Total Invoice Amount</h3>
             <p class="number">₹{{ total_invoice_amount }}</p>
         </div>
+
         <div class="card">
             <h3>Total Advance Received</h3>
             <p class="number">₹{{ total_paid_advance }}</p>
         </div>
+
     </div>
 
-    <p><a href="/">Back to Home</a></p>
+    <div class="footer">
+        <a href="/" class="back-button">← Back to Home</a>
+    </div>
+
 </body>
 </html>

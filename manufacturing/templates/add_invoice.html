@@ -2,29 +2,117 @@
 <html>
 <head>
     <title>Add Invoice</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 30px; background: #f5f5f5; }
-        form { background: white; padding: 20px; max-width: 500px; }
-        label { display: block; margin-top: 12px; }
-        input, select, button { width: 100%; padding: 9px; margin-top: 5px; box-sizing: border-box; }
-        button { margin-top: 18px; background: #333; color: white; border: none; cursor: pointer; }
-        .container {
-    max-width: 600px;
-    width: 90%;
-    margin: 30px auto;
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-sizing: border-box;
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 20px;
+        background: #f3f6f9;
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        max-width: 600px;
+        width: 100%;
+        margin: 30px auto;
+        padding: 25px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px #00000012;
+    }
+
+    h1 {
+        text-align: center;
+        color: #1e3a5f;
+        margin-top: 0;
+    }
+
+    form {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background: transparent;
+    }
+
+    label {
+        display: block;
+        margin-top: 12px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    input,
+    select,
+    button {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    input,
+    select {
+        border: 1px solid #ccc;
+        background: white;
+    }
+
+
+button,
+.button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 18px;
+    border: none;
+    border-radius: 4px;
+    background: #1e3a5f;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
-body {
-    margin: 0;
-    padding: 20px;
-    background: #f3f6f9;
-    font-family: Arial, sans-serif;
+button:hover,
+.button:hover {
+    background: #304f70;
 }
-    </style>
+
+
+    .back-btn {
+        display: block;
+        width: 100%;
+        margin-top: 12px;
+        padding: 12px;
+        background: #1e3a5f;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    @media (max-width: 480px) {
+        body {
+            padding: 12px;
+        }
+
+        .container {
+            padding: 18px;
+        }
+    }
+</style>
+
 </head>
 
 <body>
@@ -61,7 +149,10 @@ body {
             <input type="number" name="advance_amount" min="0" step="0.01" value="0" required>
 
             <button type="submit">Save Invoice</button>
-            <p><a href="{% url 'invoice_page' %}">Back to Invoices</a></p>
+
+<a href="{% url 'invoice_page' %}" class="back-btn">
+    ← Back to Invoices
+</a>
         </form>
     </div>
 </body>

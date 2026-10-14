@@ -1,229 +1,548 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manufacturing Management System - Dashboard</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
-            background: #f1f5f9;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .header {
-            background: #263746;
+        :root {
+            --navy: #203448;
+            --blue: #1677d2;
+            --bg: #f2f6fb;
+            --muted: #718096;
+            --border: #e5edf5;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--bg);
+            color: #243447;
+            line-height: 1.5;
+        }
+
+        /* Top navigation */
+        .topbar {
+            min-height: 72px;
+            padding: 14px 5%;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 3px 16px rgba(30, 52, 72, .07);
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--navy);
+        }
+
+        .brand span {
+            color: var(--blue);
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .welcome {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .logout-btn {
+            padding: 9px 16px;
+            border: 0;
+            border-radius: 8px;
+            background: #eaf1f8;
+            color: var(--navy);
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .logout-btn:hover {
+            background: #d7e5f3;
+        }
+
+        /* Hero header */
+        .hero {
+            padding: 42px 5% 46px;
+            background: linear-gradient(120deg, #172b3d, #263f58 65%, #176da7);
             color: white;
-            padding: 25px;
-            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
+        .hero-inner {
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        .hero-label {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 13px;
+            border: 1px solid rgba(255,255,255,.24);
+            border-radius: 25px;
+            background: rgba(255,255,255,.08);
+            color: #c8e7ff;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .hero h1 {
+            font-size: clamp(27px, 4vw, 38px);
+            line-height: 1.25;
+            margin-bottom: 8px;
+        }
+
+        .hero p {
+            color: #dbe8f3;
+            font-size: 15px;
+        }
+
+        /* Main content */
         .container {
             width: 90%;
-            margin: 30px auto;
+            max-width: 1500px;
+            margin: 34px auto 60px;
         }
 
-        .summary {
+        .section-heading {
             display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-bottom: 30px;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 17px;
+        }
+
+        .section-heading h2 {
+            font-size: 22px;
+            color: var(--navy);
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* Overview */
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 38px;
         }
 
         .summary-card {
+            --accent: #1677d2;
+            position: relative;
+            overflow: hidden;
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            min-width: 180px;
-            box-shadow: 0 2px 6px #00000015;
+            padding: 22px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 5px 18px rgba(30, 52, 72, .045);
+            transition: transform .2s, box-shadow .2s;
         }
 
+        .summary-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(30, 52, 72, .10);
+        }
+
+        .summary-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+        }
+
+        .summary-card.products { --accent: #1677d2; }
+        .summary-card.categories { --accent: #7c5ce0; }
+        .summary-card.production { --accent: #159b78; }
+        .summary-card.pending { --accent: #e99a22; }
+
+        .summary-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .summary-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .summary-icon {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #edf5ff;
+            border-radius: 11px;
+            font-size: 22px;
+        }
+
+        .summary-card.categories .summary-icon { background: #f0ebff; }
+        .summary-card.production .summary-icon { background: #e6f8f1; }
+        .summary-card.pending .summary-icon { background: #fff4df; }
+
+        .summary-number {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1.2;
+            color: var(--navy);
+        }
+
+        /* Management module cards */
         .modules {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 20px;
         }
 
         .card {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 0;
             background: white;
-            padding: 22px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px #00000015;
+            padding: 23px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 5px 18px rgba(30, 52, 72, .045);
+            transition: transform .22s, box-shadow .22s, border-color .22s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #bddcff;
+            box-shadow: 0 12px 26px rgba(30, 52, 72, .10);
+        }
+
+        .module-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            border-radius: 13px;
+            background: #eaf4ff;
+            font-size: 24px;
+        }
+
+        .card h3 {
+            margin-bottom: 8px;
+            font-size: 17px;
+            line-height: 1.35;
+            color: #24384b;
+        }
+
+        .card p {
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--muted);
+            flex-grow: 1;
         }
 
         .card a {
-            display: inline-block;
-            background: #263746;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: var(--navy);
             color: white;
-            padding: 10px 16px;
-            border-radius: 5px;
             text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            transition: background .2s, transform .2s;
         }
 
         .card a:hover {
-            background: #40596e;
+            background: var(--blue);
+            transform: translateY(-1px);
         }
 
-        .topbar {
-            text-align: right;
-            padding: 12px 25px;
-            background: white;
+        /* Footer */
+        footer {
+            padding: 23px 5%;
+            text-align: center;
+            background: #fff;
+            border-top: 1px solid var(--border);
+            color: #718096;
+            font-size: 13px;
         }
 
-        .topbar button {
-            padding: 7px 12px;
-            cursor: pointer;
+        @media (max-width: 1100px) {
+            .modules {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .modules {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 13px;
+            }
+
+            .card {
+                padding: 17px;
+            }
+
+            .container {
+                width: 92%;
+                margin-top: 25px;
+            }
+
+            .hero {
+                padding: 35px 5%;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .summary {
+                gap: 12px;
+            }
+
+            .summary-card {
+                padding: 15px;
+            }
+
+            .summary-number {
+                font-size: 27px;
+            }
+
+            .modules {
+                grid-template-columns: 1fr;
+            }
+
+            .section-heading h2 {
+                font-size: 19px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="topbar">
-        Welcome, {{ user.username }}!
+    <nav class="topbar">
+        <div class="brand">⚙ Manu<span>Flow</span></div>
 
-        <form method="post" action="{% url 'logout' %}"
-              style="display:inline;">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
-    </div>
+        <div class="user-area">
+            <span class="welcome">Welcome, {{ user.username }}!</span>
 
-    <div class="header">
-        <h1>Manufacturing Management System</h1>
-        <h2>Dashboard</h2>
-        <p>Manage your manufacturing operations</p>
-    </div>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
+    </nav>
 
-    <div class="container">
+    <header class="hero">
+        <div class="hero-inner">
+            <div class="hero-label">MANUFACTURING OPERATIONS</div>
+            <h1>Manufacturing Management System</h1>
+            <p>Your central workspace to manage manufacturing operations efficiently.</p>
+        </div>
+    </header>
 
-        <h2>Overview</h2>
+    <main class="container">
 
-        <div class="summary">
-
-            <div class="summary-card">
-                <h3>Total Products</h3>
-                <h2>{{ product_count }}</h2>
+        <div class="section-heading">
+            <div>
+                <h2>Overview</h2>
+                <p>A quick look at your manufacturing activity</p>
             </div>
-
-            <div class="summary-card">
-                <h3>Total Categories</h3>
-                <h2>{{ category_count }}</h2>
-            </div>
-
-            <div class="summary-card">
-                <h3>Total Production</h3>
-                <h2>{{ production_count }}</h2>
-            </div>
-
-            <div class="summary-card">
-                <h3>Pending Production</h3>
-                <h2>{{ pending_production_count }}</h2>
-            </div>
-
         </div>
 
-        <h2>Management Modules</h2>
+        <section class="summary">
 
-        <div class="modules">
+            <div class="summary-card products">
+                <div class="summary-top">
+                    <span class="summary-title">Total Products</span>
+                    <span class="summary-icon">📦</span>
+                </div>
+                <div class="summary-number">{{ product_count }}</div>
+            </div>
+
+            <div class="summary-card categories">
+                <div class="summary-top">
+                    <span class="summary-title">Total Categories</span>
+                    <span class="summary-icon">🗂️</span>
+                </div>
+                <div class="summary-number">{{ category_count }}</div>
+            </div>
+
+            <div class="summary-card production">
+                <div class="summary-top">
+                    <span class="summary-title">Total Production</span>
+                    <span class="summary-icon">🏭</span>
+                </div>
+                <div class="summary-number">{{ production_count }}</div>
+            </div>
+
+            <div class="summary-card pending">
+                <div class="summary-top">
+                    <span class="summary-title">Pending Production</span>
+                    <span class="summary-icon">⏳</span>
+                </div>
+                <div class="summary-number">{{ pending_production_count }}</div>
+            </div>
+
+        </section>
+
+        <div class="section-heading">
+            <div>
+                <h2>Management Modules</h2>
+                <p>Access and manage each part of your business</p>
+            </div>
+        </div>
+
+        <section class="modules">
 
             <div class="card">
+                <div class="module-icon">📦</div>
                 <h3>Products</h3>
                 <p>Manage products, quantities and prices.</p>
-                <a href="{% url 'product_page' %}">View Products</a>
+                <a href="{% url 'product_page' %}">View Products →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">🗂️</div>
                 <h3>Categories</h3>
-                <p>Manage product categories.</p>
-                <a href="{% url 'category_page' %}">View Categories</a>
+                <p>Manage and organize product categories.</p>
+                <a href="{% url 'category_page' %}">View Categories →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">🤝</div>
                 <h3>Suppliers</h3>
-                <p>Manage supplier information.</p>
-                <a href="{% url 'supplier_page' %}">View Suppliers</a>
+                <p>Manage supplier information and records.</p>
+                <a href="{% url 'supplier_page' %}">View Suppliers →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">🧱</div>
                 <h3>Raw Materials</h3>
-                <p>Manage raw material stock.</p>
-                <a href="{% url 'raw_material_page' %}">View Materials</a>
+                <p>Manage raw materials and available stock.</p>
+                <a href="{% url 'raw_material_page' %}">View Materials →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">🔄</div>
                 <h3>Stock Transactions</h3>
-                <p>Track raw material stock received and issued.</p>
-                <a href="{% url 'stock_transaction_page' %}">
-                    View Stock Transactions
-                </a>
+                <p>Track raw materials received and issued.</p>
+                <a href="{% url 'stock_transaction_page' %}">View Transactions →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">👥</div>
                 <h3>Customers</h3>
-                <p>Manage customer information.</p>
-                <a href="{% url 'customer_page' %}">View Customers</a>
+                <p>Manage customer details and information.</p>
+                <a href="{% url 'customer_page' %}">View Customers →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">💬</div>
                 <h3>Enquiries</h3>
-                <p>Manage customer enquiries.</p>
-                <a href="{% url 'enquiry_page' %}">View Enquiries</a>
+                <p>Manage and track customer enquiries.</p>
+                <a href="{% url 'enquiry_page' %}">View Enquiries →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">📄</div>
                 <h3>Quotations</h3>
                 <p>Manage quotations and their status.</p>
-                <a href="{% url 'quotation_page' %}">View Quotations</a>
+                <a href="{% url 'quotation_page' %}">View Quotations →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">🛒</div>
                 <h3>Sales Order Management</h3>
-                <p>Manage customer sales orders and their status.</p>
-                <a href="{% url 'sales_order_page' %}">
-                    View Sales Orders
-                </a>
+                <p>Manage customer sales orders and order status.</p>
+                <a href="{% url 'sales_order_page' %}">View Sales Orders →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">🏭</div>
                 <h3>Production Management</h3>
                 <p>Manage production records and quantities.</p>
-                <a href="/api/production/">View Production</a>
+                <a href="/api/production/">View Production →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">✅</div>
                 <h3>Quality Checks</h3>
-                <p>Track inspection results and rejected quantities.</p>
-                <a href="{% url 'quality_check_page' %}">
-                    View Quality Checks
-                </a>
+                <p>Track inspections and rejected quantities.</p>
+                <a href="{% url 'quality_check_page' %}">View Quality Checks →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">🚚</div>
                 <h3>Dispatch Management</h3>
                 <p>Track deliveries, transporters and dispatch status.</p>
-                <a href="{% url 'dispatch_page' %}">View Dispatches</a>
+                <a href="{% url 'dispatch_page' %}">View Dispatches →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">🧾</div>
                 <h3>Invoice Management</h3>
                 <p>Manage invoices and outstanding balances.</p>
-                <a href="{% url 'invoice_page' %}">View Invoices</a>
+                <a href="{% url 'invoice_page' %}">View Invoices →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">💳</div>
                 <h3>Payment Management</h3>
                 <p>Record customer payments and payment methods.</p>
-                <a href="{% url 'payment_page' %}">View Payments</a>
+                <a href="{% url 'payment_page' %}">View Payments →</a>
             </div>
 
             <div class="card">
+                <div class="module-icon">📈</div>
                 <h3>Business Reports</h3>
                 <p>View manufacturing, sales and payment summaries.</p>
-                <a href="{% url 'reports_page' %}">View Reports</a>
+                <a href="{% url 'reports_page' %}">View Reports →</a>
             </div>
 
-        </div>
-    </div>
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2026 Manufacturing Management System · All rights reserved
+    </footer>
 
 </body>
 </html>

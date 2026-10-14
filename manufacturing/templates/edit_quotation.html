@@ -1,108 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Edit Quotation</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f3f6f9;
+            color: #263746;
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.10);
+        }
+
+        h1 {
+            margin: 0 0 25px;
+            text-align: center;
+            color: #1e3a5f;
+            font-size: 27px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #1e3a5f;
+        }
+
+        button,
+        .back-btn {
+            display: block;
+            width: 100%;
+            margin-top: 18px;
+            padding: 12px;
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover,
+        .back-btn:hover {
+            background: #304f70;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 22px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1>Edit Quotation</h1>
+    <div class="container">
 
-    <form method="POST">
-        {% csrf_token %}
+        <h1>Edit Quotation</h1>
 
-        <label>Enquiry:</label><br>
-        <select name="enquiry" required>
+        <form method="POST">
+            {% csrf_token %}
 
-            {% for enquiry in enquiries %}
-                <option value="{{ enquiry.id }}"
-                    {% if enquiry.id == quotation.enquiry.id %}selected{% endif %}>
-                    {{ enquiry.customer.name }} - {{ enquiry.product.name }}
+            <label for="enquiry">Enquiry:</label>
+            <select id="enquiry" name="enquiry" required>
+
+                {% for enquiry in enquiries %}
+                    <option
+                        value="{{ enquiry.id }}"
+                        {% if enquiry.id == quotation.enquiry.id %}selected{% endif %}
+                    >
+                        {{ enquiry.customer.name }} - {{ enquiry.product.name }}
+                    </option>
+                {% endfor %}
+
+            </select>
+
+            <label for="quotation_number">Quotation Number:</label>
+            <input
+                type="text"
+                id="quotation_number"
+                name="quotation_number"
+                value="{{ quotation.quotation_number }}"
+                required
+            >
+
+            <label for="quantity">Quantity:</label>
+            <input
+                type="number"
+                id="quantity"
+                name="quantity"
+                value="{{ quotation.quantity }}"
+                min="1"
+                required
+            >
+
+            <label for="price">Price:</label>
+            <input
+                type="number"
+                id="price"
+                name="price"
+                value="{{ quotation.price }}"
+                step="0.01"
+                min="0"
+                required
+            >
+
+            <label for="lead_time">Lead Time:</label>
+            <input
+                type="text"
+                id="lead_time"
+                name="lead_time"
+                value="{{ quotation.lead_time }}"
+                required
+            >
+
+            <label for="version">Version:</label>
+            <input
+                type="number"
+                id="version"
+                name="version"
+                value="{{ quotation.version }}"
+                min="1"
+                required
+            >
+
+            <label for="status">Status:</label>
+            <select id="status" name="status">
+
+                <option value="Draft"
+                    {% if quotation.status == "Draft" %}selected{% endif %}>
+                    Draft
                 </option>
-            {% endfor %}
 
-        </select>
+                <option value="Sent"
+                    {% if quotation.status == "Sent" %}selected{% endif %}>
+                    Sent
+                </option>
 
-        <br><br>
+                <option value="Accepted"
+                    {% if quotation.status == "Accepted" %}selected{% endif %}>
+                    Accepted
+                </option>
 
-        <label>Quotation Number:</label><br>
-        <input type="text"
-               name="quotation_number"
-               value="{{ quotation.quotation_number }}"
-               required>
+                <option value="Rejected"
+                    {% if quotation.status == "Rejected" %}selected{% endif %}>
+                    Rejected
+                </option>
 
-        <br><br>
+            </select>
 
-        <label>Quantity:</label><br>
-        <input type="number"
-               name="quantity"
-               value="{{ quotation.quantity }}"
-               min="1"
-               required>
+            <button type="submit">Update Quotation</button>
 
-        <br><br>
+        </form>
 
-        <label>Price:</label><br>
-        <input type="number"
-               name="price"
-               value="{{ quotation.price }}"
-               step="0.01"
-               min="0"
-               required>
+        <a href="{% url 'quotation_page' %}" class="back-btn">
+            ← Back to Quotations
+        </a>
 
-        <br><br>
-
-        <label>Lead Time:</label><br>
-        <input type="text"
-               name="lead_time"
-               value="{{ quotation.lead_time }}"
-               required>
-
-        <br><br>
-
-        <label>Version:</label><br>
-        <input type="number"
-               name="version"
-               value="{{ quotation.version }}"
-               min="1"
-               required>
-
-        <br><br>
-
-        <label>Status:</label><br>
-        <select name="status">
-
-            <option value="Draft"
-                {% if quotation.status == "Draft" %}selected{% endif %}>
-                Draft
-            </option>
-
-            <option value="Sent"
-                {% if quotation.status == "Sent" %}selected{% endif %}>
-                Sent
-            </option>
-
-            <option value="Accepted"
-                {% if quotation.status == "Accepted" %}selected{% endif %}>
-                Accepted
-            </option>
-
-            <option value="Rejected"
-                {% if quotation.status == "Rejected" %}selected{% endif %}>
-                Rejected
-            </option>
-
-        </select>
-
-        <br><br>
-
-        <button type="submit">Update Quotation</button>
-    </form>
-
-    <br>
-
-    <a href="{% url 'quotation_page' %}">
-        ← Back to Quotations
-    </a>
+    </div>
 
 </body>
 </html>
