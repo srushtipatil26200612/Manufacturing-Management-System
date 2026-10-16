@@ -127,6 +127,7 @@ class SalesOrder(models.Model):
         return self.order_number
 
 
+
 class Production(models.Model):
     production_number = models.CharField(max_length=20, unique=True)
     product = models.ForeignKey(

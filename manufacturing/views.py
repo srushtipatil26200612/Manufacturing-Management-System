@@ -1,6 +1,7 @@
 from django.shortcuts import render , redirect, get_object_or_404
 from decimal import Decimal, InvalidOperation
 from django.db import IntegrityError
+from django.db import transaction
 from django.http import JsonResponse
 from .models import Product ,  Category ,Supplier ,RawMaterial ,Customer ,Enquiry ,Quotation ,SalesOrder ,Production ,QualityCheck ,Dispatch ,Invoice,Payment ,StockTransaction
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -144,6 +145,16 @@ def dashboard(request):
         'sales_order_count': sales_order_count,
         'production_count': production_count,
         'pending_production_count': pending_production_count,
+    })
+
+def dashboard_stats(request):
+    return JsonResponse({
+        'product_count': Product.objects.count(),
+        'category_count': Category.objects.count(),
+        'production_count': Production.objects.count(),
+        'pending_production_count': Production.objects.filter(
+            status='Pending'
+        ).count(),
     })
 
 
@@ -676,6 +687,81 @@ def add_quality_check(request):
         'productions': productions
     })
 
+
+@login_required
+def edit_quality_check(request, quality_check_id):
+    quality_check = get_object_or_404(
+        QualityCheck,
+        id=quality_check_id
+    )
+
+    if request.method == 'POST':
+        inspected_text = request.POST.get('inspected_quantity', '')
+        accepted_text = request.POST.get('accepted_quantity', '')
+        rejected_text = request.POST.get('rejected_quantity', '')
+        result = request.POST.get('result')
+        corrective_action = request.POST.get(
+            'corrective_action', ''
+        ).strip()
+
+        try:
+            inspected = int(inspected_text)
+            accepted = int(accepted_text)
+            rejected = int(rejected_text)
+
+            if inspected <= 0 or accepted < 0 or rejected < 0:
+                messages.error(request, 'Please enter valid quantities.')
+
+            elif accepted + rejected != inspected:
+                messages.error(
+                    request,
+                    'Accepted quantity plus rejected quantity must equal inspected quantity.'
+                )
+
+            elif result not in ['Pending', 'Passed', 'Failed']:
+                messages.error(request, 'Please select a valid result.')
+
+            else:
+                quality_check.inspected_quantity = inspected
+                quality_check.accepted_quantity = accepted
+                quality_check.rejected_quantity = rejected
+                quality_check.result = result
+                quality_check.corrective_action = corrective_action
+                quality_check.save()
+
+                messages.success(
+                    request,
+                    'Quality check updated successfully.'
+                )
+                return redirect('quality_check_page')
+
+        except (ValueError, TypeError):
+            messages.error(request, 'Please enter valid quantities.')
+
+    return render(request, 'edit_quality_check.html', {
+        'quality_check': quality_check
+    })
+
+
+@login_required
+def delete_quality_check(request, quality_check_id):
+    if request.method != 'POST':
+        return redirect('quality_check_page')
+
+    quality_check = get_object_or_404(
+        QualityCheck,
+        id=quality_check_id
+    )
+    quality_check.delete()
+
+    messages.success(
+        request,
+        'Quality check deleted successfully.'
+    )
+    return redirect('quality_check_page')
+
+
+
 @login_required
 def dispatch_page(request):
     dispatches = Dispatch.objects.select_related('sales_order').all()
@@ -723,6 +809,79 @@ def add_dispatch(request):
     return render(request, 'add_dispatch.html', {
         'orders': orders
     })
+
+
+@login_required
+def edit_dispatch(request, dispatch_id):
+    dispatch = get_object_or_404(Dispatch, id=dispatch_id)
+
+    if request.method == 'POST':
+        dispatch_date = request.POST.get('dispatch_date', '')
+        transporter = request.POST.get('transporter', '').strip()
+        tracking_number = request.POST.get('tracking_number', '').strip()
+        quantity_text = request.POST.get('dispatched_quantity', '')
+        delivery_status = request.POST.get('delivery_status', 'Pending')
+
+        try:
+            quantity = int(quantity_text)
+
+            if not dispatch_date or not transporter:
+                messages.error(
+                    request,
+                    'Please enter the dispatch date and transporter.'
+                )
+
+            elif quantity <= 0:
+                messages.error(
+                    request,
+                    'Dispatched quantity must be greater than zero.'
+                )
+
+            elif delivery_status not in [
+                'Pending', 'Dispatched', 'In Transit', 'Delivered'
+            ]:
+                messages.error(request, 'Please select a valid delivery status.')
+
+            else:
+                dispatch.dispatch_date = dispatch_date
+                dispatch.transporter = transporter
+                dispatch.tracking_number = tracking_number
+                dispatch.dispatched_quantity = quantity
+                dispatch.delivery_status = delivery_status
+                dispatch.save()
+
+                messages.success(
+                    request,
+                    'Dispatch record updated successfully.'
+                )
+                return redirect('dispatch_page')
+
+        except (ValueError, TypeError):
+            messages.error(
+                request,
+                'Please enter a valid dispatched quantity.'
+            )
+
+    return render(request, 'edit_dispatch.html', {
+        'dispatch': dispatch
+    })
+
+
+@login_required
+def delete_dispatch(request, dispatch_id):
+    if request.method != 'POST':
+        return redirect('dispatch_page')
+
+    dispatch = get_object_or_404(Dispatch, id=dispatch_id)
+    dispatch.delete()
+
+    messages.success(
+        request,
+        'Dispatch record deleted successfully.'
+    )
+    return redirect('dispatch_page')
+
+
 
 @login_required
 def invoice_page(request):
@@ -781,6 +940,89 @@ def add_invoice(request):
     orders = SalesOrder.objects.all()
     return render(request, 'add_invoice.html', {'orders': orders})
 
+
+@login_required
+def edit_invoice(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+
+    if request.method == 'POST':
+        invoice_number = request.POST.get(
+            'invoice_number', ''
+        ).strip()
+        invoice_date = request.POST.get('invoice_date', '')
+        total_text = request.POST.get('total_amount', '0')
+        advance_text = request.POST.get('advance_amount', '0')
+        status = request.POST.get('status', '')
+
+        try:
+            total_amount = Decimal(total_text)
+            advance_amount = Decimal(advance_text)
+
+            if not invoice_number or not invoice_date:
+                messages.error(
+                    request, 'Please fill all required fields.'
+                )
+
+            elif (
+                total_amount <= 0
+                or advance_amount < 0
+                or advance_amount > total_amount
+            ):
+                messages.error(
+                    request, 'Please enter valid invoice amounts.'
+                )
+
+            elif status not in ['Unpaid', 'Partially Paid', 'Paid']:
+                messages.error(
+                    request, 'Please select a valid invoice status.'
+                )
+
+            elif Invoice.objects.filter(
+                invoice_number=invoice_number
+            ).exclude(id=invoice.id).exists():
+                messages.error(
+                    request, 'This invoice number already exists.'
+                )
+
+            else:
+                invoice.invoice_number = invoice_number
+                invoice.invoice_date = invoice_date
+                invoice.total_amount = total_amount
+                invoice.advance_amount = advance_amount
+                invoice.status = status
+                invoice.save()
+
+                messages.success(
+                    request, 'Invoice updated successfully.'
+                )
+                return redirect('invoice_page')
+
+        except (InvalidOperation, ValueError, TypeError):
+            messages.error(
+                request, 'Please enter valid invoice details.'
+            )
+
+    return render(request, 'edit_invoice.html', {
+        'invoice': invoice
+    })
+
+
+@login_required
+def delete_invoice(request, invoice_id):
+    if request.method != 'POST':
+        return redirect('invoice_page')
+
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+    invoice.delete()
+
+    messages.success(
+        request,
+        'Invoice deleted successfully.'
+    )
+    return redirect('invoice_page')
+
+
+
 @login_required
 def payment_page(request):
     payments = Payment.objects.select_related('invoice').all()
@@ -836,6 +1078,118 @@ def add_payment(request):
 
     invoices = Invoice.objects.all()
     return render(request, 'add_payment.html', {'invoices': invoices})
+
+
+@login_required
+def edit_payment(request, payment_id):
+    payment = get_object_or_404(Payment, id=payment_id)
+
+    if request.method == 'POST':
+        payment_date = request.POST.get('payment_date', '')
+        amount_text = request.POST.get('amount', '0')
+        payment_method = request.POST.get('payment_method', '')
+        reference_number = request.POST.get(
+            'reference_number', ''
+        ).strip()
+
+        try:
+            amount = Decimal(amount_text)
+            invoice = payment.invoice
+
+            other_payments = invoice.payments.exclude(
+                id=payment.id
+            )
+            other_paid = sum(
+                other_payments.values_list('amount', flat=True),
+                Decimal('0.00')
+            )
+
+            available_balance = (
+                invoice.total_amount
+                - invoice.advance_amount
+                - other_paid
+            )
+
+            if not payment_date:
+                messages.error(request, 'Please select payment date.')
+
+            elif amount <= 0:
+                messages.error(
+                    request, 'Payment amount must be greater than zero.'
+                )
+
+            elif amount > available_balance:
+                messages.error(
+                    request,
+                    'Payment amount cannot exceed outstanding balance.'
+                )
+
+            elif payment_method not in [
+                'Cash', 'UPI', 'Bank Transfer', 'Cheque'
+            ]:
+                messages.error(
+                    request, 'Please select a valid payment method.'
+                )
+
+            else:
+                payment.payment_date = payment_date
+                payment.amount = amount
+                payment.payment_method = payment_method
+                payment.reference_number = reference_number
+                payment.save()
+
+                total_paid = invoice.advance_amount + sum(
+                    invoice.payments.values_list('amount', flat=True),
+                    Decimal('0.00')
+                )
+
+                if total_paid >= invoice.total_amount:
+                    invoice.status = 'Paid'
+                elif total_paid > 0:
+                    invoice.status = 'Partially Paid'
+                else:
+                    invoice.status = 'Unpaid'
+
+                invoice.save()
+
+                messages.success(
+                    request, 'Payment updated successfully.'
+                )
+                return redirect('payment_page')
+
+        except (InvalidOperation, ValueError, TypeError):
+            messages.error(
+                request, 'Please enter valid payment details.'
+            )
+
+    return render(request, 'edit_payment.html', {
+        'payment': payment
+    })
+
+
+@login_required
+def delete_payment(request, payment_id):
+    if request.method == 'POST':
+        payment = get_object_or_404(Payment, id=payment_id)
+        invoice = payment.invoice
+
+        payment.delete()
+
+        total_paid = invoice.advance_amount + sum(
+            invoice.payments.values_list('amount', flat=True)
+        )
+
+        if total_paid >= invoice.total_amount:
+            invoice.status = 'Paid'
+        elif total_paid > 0:
+            invoice.status = 'Partially Paid'
+        else:
+            invoice.status = 'Unpaid'
+
+        invoice.save()
+        messages.success(request, 'Payment deleted successfully.')
+
+    return redirect('payment_page')
 
 
 @login_required
@@ -923,4 +1277,155 @@ def add_stock_transaction(request):
         'add_stock_transaction.html',
         {'raw_materials': raw_materials}
     )
+
+
+@login_required
+def edit_stock_transaction(request, transaction_id):
+    with transaction.atomic():
+        stock_transaction = get_object_or_404(
+            StockTransaction.objects.select_for_update(),
+            id=transaction_id
+        )
+
+        raw_materials = RawMaterial.objects.all()
+
+        if request.method == 'POST':
+            material_id = request.POST.get('raw_material')
+            transaction_type = request.POST.get('transaction_type')
+            quantity_text = request.POST.get('quantity')
+            note = request.POST.get('note', '').strip()
+
+            try:
+                quantity = int(quantity_text)
+                material = get_object_or_404(
+                    RawMaterial.objects.select_for_update(),
+                    id=material_id
+                )
+
+                if quantity <= 0:
+                    messages.error(
+                        request,
+                        'Quantity must be greater than zero.'
+                    )
+
+                elif transaction_type not in ['IN', 'OUT']:
+                    messages.error(
+                        request,
+                        'Select a valid transaction type.'
+                    )
+
+                else:
+                    old_material = RawMaterial.objects.select_for_update().get(
+                        id=stock_transaction.raw_material_id
+                    )
+
+                    # Restore the effect of the old transaction.
+                    if stock_transaction.transaction_type == 'IN':
+                        old_material.quantity -= stock_transaction.quantity
+                    else:
+                        old_material.quantity += stock_transaction.quantity
+
+                    # Apply the edited transaction to the selected material.
+                    if transaction_type == 'OUT':
+                        available = old_material.quantity
+
+                        if material.id != old_material.id:
+                            available = material.quantity
+
+                        if quantity > available:
+                            messages.error(
+                                request,
+                                'Insufficient raw material stock.'
+                            )
+                            return render(
+                                request,
+                                'edit_stock_transaction.html',
+                                {
+                                    'stock_transaction': stock_transaction,
+                                    'raw_materials': raw_materials
+                                }
+                            )
+
+                    if material.id == old_material.id:
+                        if transaction_type == 'IN':
+                            old_material.quantity += quantity
+                        else:
+                            old_material.quantity -= quantity
+
+                        old_material.save()
+                    else:
+                        old_material.save()
+
+                        if transaction_type == 'IN':
+                            material.quantity += quantity
+                        else:
+                            material.quantity -= quantity
+
+                        material.save()
+
+                    stock_transaction.raw_material = material
+                    stock_transaction.transaction_type = transaction_type
+                    stock_transaction.quantity = quantity
+                    stock_transaction.note = note
+                    stock_transaction.save()
+
+                    messages.success(
+                        request,
+                        'Stock transaction updated successfully.'
+                    )
+                    return redirect('stock_transaction_page')
+
+            except (ValueError, TypeError):
+                messages.error(
+                    request,
+                    'Please enter valid transaction details.'
+                )
+
+    return render(
+        request,
+        'edit_stock_transaction.html',
+        {
+            'stock_transaction': stock_transaction,
+            'raw_materials': raw_materials
+        }
+    )
+
+@login_required
+def delete_stock_transaction(request, transaction_id):
+    if request.method != 'POST':
+        return redirect('stock_transaction_page')
+
+    with transaction.atomic():
+        stock_transaction = get_object_or_404(
+            StockTransaction.objects.select_for_update(),
+            id=transaction_id
+        )
+
+        material = get_object_or_404(
+            RawMaterial.objects.select_for_update(),
+            id=stock_transaction.raw_material_id
+        )
+
+        # Reverse the effect of the original transaction.
+        if stock_transaction.transaction_type == 'IN':
+            material.quantity -= stock_transaction.quantity
+        else:
+            material.quantity += stock_transaction.quantity
+
+        if material.quantity < 0:
+            messages.error(
+                request,
+                'Cannot delete this transaction because stock would become negative.'
+            )
+            return redirect('stock_transaction_page')
+
+        material.save()
+        stock_transaction.delete()
+
+    messages.success(
+        request,
+        'Stock transaction deleted successfully.'
+    )
+    return redirect('stock_transaction_page')
+
 

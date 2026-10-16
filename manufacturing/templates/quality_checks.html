@@ -50,6 +50,47 @@
 .button:hover {
     background: #345b85;
 }
+
+/* Common Action Buttons */
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.action-btn {
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: 5px;
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+ transition: background 0.3s, transform 0.2s;
+}
+
+.edit-btn {
+    background: #2563eb;
+}
+
+.edit-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.delete-btn {
+    background: #dc2626;
+}
+
+.delete-btn:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+}
+
     </style>
 </head>
 <body>
@@ -73,6 +114,8 @@
                 <th>Rejected</th>
                 <th>Result</th>
                 <th>Corrective Action</th>
+                <th>Actions</th>
+
             </tr>
         </thead>
         <tbody>
@@ -85,10 +128,35 @@
                 <td>{{ check.rejected_quantity }}</td>
                 <td>{{ check.result }}</td>
                 <td>{{ check.corrective_action|default:"—" }}</td>
+               
+
+<td>
+    <div class="action-buttons">
+
+        <a href="{% url 'edit_quality_check' check.id %}"
+           class="action-btn edit-btn">
+            Edit
+        </a>
+
+        <form method="POST"
+              action="{% url 'delete_quality_check' check.id %}"
+              onsubmit="return confirm('Are you sure you want to delete this quality check?');"
+              style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="action-btn delete-btn">
+                Delete
+            </button>
+        </form>
+
+    </div>
+</td>
+
+
+
             </tr>
             {% empty %}
             <tr>
-                <td colspan="7" class="empty">No quality checks recorded yet.</td>
+                <td colspan="8" class="empty">No quality checks recorded yet.</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Stock Transaction</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f3f6f9;
+            color: #263746;
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.10);
+        }
+
+        h1 {
+            margin: 0 0 25px;
+            text-align: center;
+            color: #1e3a5f;
+            font-size: 27px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+            background: white;
+            color: #263746;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+            font-family: Arial, sans-serif;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #1e3a5f;
+        }
+
+        button,
+        .back-btn {
+            display: block;
+            width: 100%;
+            margin-top: 18px;
+            padding: 12px;
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover,
+        .back-btn:hover {
+            background: #304f70;
+        }
+
+        .message {
+            padding: 12px;
+            margin-bottom: 15px;
+            background: #f3f6f9;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Edit Stock Transaction</h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label for="raw_material">Raw Material:</label>
+            <select id="raw_material" name="raw_material" required>
+                {% for material in raw_materials %}
+                    <option value="{{ material.id }}"
+                        {% if material.id == stock_transaction.raw_material_id %}selected{% endif %}>
+                        {{ material.name }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label for="transaction_type">Transaction Type:</label>
+            <select id="transaction_type" name="transaction_type" required>
+                <option value="IN"
+                    {% if stock_transaction.transaction_type == "IN" %}selected{% endif %}>
+                    Stock In
+                </option>
+
+                <option value="OUT"
+                    {% if stock_transaction.transaction_type == "OUT" %}selected{% endif %}>
+                    Stock Out
+                </option>
+            </select>
+
+            <label for="quantity">Quantity:</label>
+            <input
+                type="number"
+                id="quantity"
+                name="quantity"
+                min="1"
+                value="{{ stock_transaction.quantity }}"
+                required
+            >
+
+            <label for="note">Note:</label>
+            <textarea id="note" name="note">{{ stock_transaction.note }}</textarea>
+
+            <button type="submit">Update Stock Transaction</button>
+        </form>
+
+        <a href="{% url 'stock_transaction_page' %}" class="back-btn">
+            ← Back to Stock Transactions
+        </a>
+
+    </div>
+
+</body>
+</html>

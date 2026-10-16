@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Dispatch</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6f9;
+            color: #263746;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            color: #1e3a5f;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 7px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #1e3a5f;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        button, .back {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button {
+            background: #1e3a5f;
+            color: white;
+        }
+
+        .back {
+            background: #64748b;
+            color: white;
+        }
+
+        .message {
+            padding: 10px;
+            background: #fee2e2;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 500px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>Edit Dispatch</h1>
+
+    {% for message in messages %}
+        <div class="message">{{ message }}</div>
+    {% endfor %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Sales Order</label>
+        <input
+            type="text"
+            value="{{ dispatch.sales_order.order_number }}"
+            readonly
+        >
+
+        <label>Dispatch Date</label>
+        <input
+            type="date"
+            name="dispatch_date"
+            value="{{ dispatch.dispatch_date|date:'Y-m-d' }}"
+            required
+        >
+
+        <label>Transporter</label>
+        <input
+            type="text"
+            name="transporter"
+            value="{{ dispatch.transporter }}"
+            maxlength="100"
+            required
+        >
+
+        <label>Tracking Number</label>
+        <input
+            type="text"
+            name="tracking_number"
+            value="{{ dispatch.tracking_number }}"
+            maxlength="100"
+        >
+
+        <label>Dispatched Quantity</label>
+        <input
+            type="number"
+            name="dispatched_quantity"
+            value="{{ dispatch.dispatched_quantity }}"
+            min="1"
+            required
+        >
+
+        <label>Delivery Status</label>
+        <select name="delivery_status" required>
+            <option value="Pending"
+                {% if dispatch.delivery_status == 'Pending' %}selected{% endif %}>
+                Pending
+            </option>
+
+            <option value="Dispatched"
+                {% if dispatch.delivery_status == 'Dispatched' %}selected{% endif %}>
+                Dispatched
+            </option>
+
+            <option value="In Transit"
+                {% if dispatch.delivery_status == 'In Transit' %}selected{% endif %}>
+                In Transit
+            </option>
+
+            <option value="Delivered"
+                {% if dispatch.delivery_status == 'Delivered' %}selected{% endif %}>
+                Delivered
+            </option>
+        </select>
+
+        <div class="actions">
+            <button type="submit">Update Dispatch</button>
+            <a href="{% url 'dispatch_page' %}" class="back">Back</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

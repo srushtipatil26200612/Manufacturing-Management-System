@@ -39,11 +39,51 @@
 .button:hover {
     background: #40596e;
 }
+
+/* Common Action Buttons */
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.action-btn {
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: 5px;
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+.edit-btn {
+    background: #2563eb;
+}
+
+.edit-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.delete-btn {
+    background: #dc2626;
+}
+
+.delete-btn:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+}
+
     </style>
 </head>
 <body>
-    <h1>Manufacturing Management System</h1>
-    <h2>Payments</h2>
+    <h1>Payments</h1>
+   
 
     <a href="{% url 'add_payment' %}" class="button">+ Add Payment</a>
      <a href="{% url 'dashboard' %}" class="button">← Back to Dashboard</a>
@@ -55,6 +95,7 @@
             <th>Amount</th>
             <th>Payment Method</th>
             <th>Reference Number</th>
+            <th>Actions</th>
         </tr>
 
         {% for payment in payments %}
@@ -64,10 +105,36 @@
             <td>{{ payment.amount }}</td>
             <td>{{ payment.payment_method }}</td>
             <td>{{ payment.reference_number }}</td>
+            
+
+
+<td>
+    <div class="action-buttons">
+
+        <a href="{% url 'edit_payment' payment.id %}"
+           class="action-btn edit-btn">
+            Edit
+        </a>
+
+        <form method="POST"
+              action="{% url 'delete_payment' payment.id %}"
+              style="margin:0;"
+              onsubmit="return confirm('Are you sure you want to delete this payment?');">
+            {% csrf_token %}
+            <button type="submit" class="action-btn delete-btn">
+                Delete
+            </button>
+        </form>
+
+    </div>
+</td>
+
+
+
         </tr>
         {% empty %}
         <tr>
-            <td colspan="5">No payments recorded.</td>
+            <td colspan="6">No payments recorded.</td>
         </tr>
         {% endfor %}
     </table>

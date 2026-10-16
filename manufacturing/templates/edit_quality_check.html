@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Quality Check</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6f9;
+            color: #263746;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 550px;
+            margin: 20px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            color: #1e3a5f;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 7px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 18px;
+            border: none;
+            border-radius: 5px;
+            background: #1e3a5f;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background: #294f7c;
+        }
+
+        .back-btn {
+            background: #64748b;
+            margin-left: 8px;
+        }
+
+        .back-btn:hover {
+            background: #475569;
+        }
+
+        .messages {
+            padding: 10px;
+            margin-bottom: 15px;
+            background: #fff1f2;
+            color: #b91c1c;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            .btn {
+                margin-top: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Edit Quality Check</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messages">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Production Number</label>
+        <input type="text"
+               value="{{ quality_check.production.production_number }}"
+               readonly>
+
+        <label>Inspected Quantity</label>
+        <input type="number"
+               name="inspected_quantity"
+               min="1"
+               value="{{ quality_check.inspected_quantity }}"
+               required>
+
+        <label>Accepted Quantity</label>
+        <input type="number"
+               name="accepted_quantity"
+               min="0"
+               value="{{ quality_check.accepted_quantity }}"
+               required>
+
+        <label>Rejected Quantity</label>
+        <input type="number"
+               name="rejected_quantity"
+               min="0"
+               value="{{ quality_check.rejected_quantity }}"
+               required>
+
+        <label>Result</label>
+        <select name="result" required>
+            <option value="Pending"
+                {% if quality_check.result == "Pending" %}selected{% endif %}>
+                Pending
+            </option>
+            <option value="Passed"
+                {% if quality_check.result == "Passed" %}selected{% endif %}>
+                Passed
+            </option>
+            <option value="Failed"
+                {% if quality_check.result == "Failed" %}selected{% endif %}>
+                Failed
+            </option>
+        </select>
+
+        <label>Corrective Action</label>
+        <textarea name="corrective_action">{{ quality_check.corrective_action }}</textarea>
+
+        <button type="submit" class="btn">Update Quality Check</button>
+
+        <a href="{% url 'quality_check_page' %}"
+           class="btn back-btn">Back</a>
+    </form>
+
+</div>
+</body>
+</html>

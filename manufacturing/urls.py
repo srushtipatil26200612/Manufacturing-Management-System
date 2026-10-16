@@ -2,6 +2,11 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path(
+    'dashboard-stats/',
+    views.dashboard_stats,
+    name='dashboard_stats'
+),
      path('products/', views.product_list, name='product_list'),
      path('products-page/', views.product_page, name='product_page'),
      path('add-product/', views.add_product, name='add_product'),
@@ -69,12 +74,67 @@ path('quality-checks/', views.quality_check_page, name='quality_check_page'),
 
 path('add-quality-check/', views.add_quality_check, name='add_quality_check'),
 
+path(
+    'quality-checks/<int:quality_check_id>/edit/',
+    views.edit_quality_check,
+    name='edit_quality_check'
+),
+
+path(
+    'quality-checks/<int:quality_check_id>/delete/',
+    views.delete_quality_check,
+    name='delete_quality_check'
+),
+
+
 path('dispatches/', views.dispatch_page, name='dispatch_page'),
 path('add-dispatch/', views.add_dispatch, name='add_dispatch'),
+
+path(
+    'dispatches/<int:dispatch_id>/edit/',
+    views.edit_dispatch,
+    name='edit_dispatch'
+),
+
+path(
+    'dispatches/<int:dispatch_id>/delete/',
+    views.delete_dispatch,
+    name='delete_dispatch'
+),
+
+
 path('invoices/', views.invoice_page, name='invoice_page'),
 path('add-invoice/', views.add_invoice, name='add_invoice'),
+
+path(
+    'invoices/<int:invoice_id>/edit/',
+    views.edit_invoice,
+    name='edit_invoice'
+),
+
+path(
+    'invoices/<int:invoice_id>/delete/',
+    views.delete_invoice,
+    name='delete_invoice'
+),
+
+
 path('payments/', views.payment_page, name='payment_page'),
 path('add-payment/', views.add_payment, name='add_payment'),
+
+path(
+    'payments/<int:payment_id>/edit/',
+    views.edit_payment,
+    name='edit_payment'
+),
+
+path(
+    'payments/<int:payment_id>/delete/',
+    views.delete_payment,
+    name='delete_payment'
+),
+
+
 path('reports/', views.reports_page, name='reports_page'),
 path(
     'stock-transactions/',
@@ -86,4 +146,16 @@ path(
     views.add_stock_transaction,
     name='add_stock_transaction'
 ),
+
+path(
+    'stock-transactions/<int:transaction_id>/edit/',
+    views.edit_stock_transaction,
+    name='edit_stock_transaction'
+),
+path(
+    'stock-transactions/<int:transaction_id>/delete/',
+    views.delete_stock_transaction,
+    name='delete_stock_transaction'
+),
+
 ]
