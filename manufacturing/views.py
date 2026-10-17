@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 
+@login_required
 def product_list(request):
     products = Product.objects.all()
 
@@ -26,6 +27,7 @@ def product_list(request):
 
     return JsonResponse(data, safe=False)
 
+@login_required
 def product_page(request):
     search = request.GET.get('search', '')
     selected_category = request.GET.get('category', '')
@@ -52,6 +54,7 @@ def product_page(request):
     })
 
 
+@login_required
 def add_product(request):
     categories = Category.objects.all()
     if request.method == 'POST':
@@ -83,12 +86,14 @@ def add_product(request):
     'categories': categories
 })
 
+@login_required
 def delete_product(request, product_id):
     product = Product.objects.get(id=product_id)
     product.delete()
 
     return redirect('product_page')
 
+@login_required
 def edit_product(request, product_id):
     categories = Category.objects.all()
     product = Product.objects.get(id=product_id)
@@ -147,6 +152,12 @@ def dashboard(request):
         'pending_production_count': pending_production_count,
     })
 
+def auth_status(request):
+    return JsonResponse({
+        "is_authenticated": request.user.is_authenticated
+    })
+    
+@login_required
 def dashboard_stats(request):
     return JsonResponse({
         'product_count': Product.objects.count(),
@@ -158,7 +169,7 @@ def dashboard_stats(request):
     })
 
 
-    
+@login_required    
 def category_page(request):
     categories = Category.objects.all()
 
@@ -166,6 +177,7 @@ def category_page(request):
         'categories': categories
     })
 
+@login_required
 def add_category(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -176,12 +188,14 @@ def add_category(request):
 
     return render(request, 'add_category.html')
 
+@login_required
 def delete_category(request, category_id):
     category = Category.objects.get(id=category_id)
     category.delete()
 
     return redirect('category_page')
 
+@login_required
 def edit_category(request, category_id):
     category = Category.objects.get(id=category_id)
 
@@ -195,6 +209,7 @@ def edit_category(request, category_id):
         'category': category
     })
 
+@login_required
 def supplier_page(request):
     suppliers = Supplier.objects.all()
 
@@ -202,6 +217,7 @@ def supplier_page(request):
         'suppliers': suppliers
     })
 
+@login_required
 def add_supplier(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -220,12 +236,14 @@ def add_supplier(request):
 
     return render(request, 'add_supplier.html')
 
+@login_required
 def delete_supplier(request, supplier_id):
     supplier = Supplier.objects.get(id=supplier_id)
     supplier.delete()
 
     return redirect('supplier_page')
 
+@login_required
 def edit_supplier(request, supplier_id):
     supplier = Supplier.objects.get(id=supplier_id)
 
@@ -242,7 +260,7 @@ def edit_supplier(request, supplier_id):
     return render(request, 'edit_supplier.html', {
         'supplier': supplier
     })
-
+@login_required
 def raw_material_page(request):
     raw_materials = RawMaterial.objects.all()
 
@@ -250,6 +268,7 @@ def raw_material_page(request):
         'raw_materials': raw_materials
     })
 
+@login_required
 def add_raw_material(request):
     suppliers = Supplier.objects.all()
 
@@ -283,6 +302,7 @@ def add_raw_material(request):
         'suppliers': suppliers
     })
 
+@login_required
 def edit_raw_material(request, material_id):
     material = RawMaterial.objects.get(id=material_id)
     suppliers = Supplier.objects.all()
@@ -311,12 +331,14 @@ def edit_raw_material(request, material_id):
         'suppliers': suppliers
     })
 
+@login_required
 def delete_raw_material(request, material_id):
     material = RawMaterial.objects.get(id=material_id)
     material.delete()
 
     return redirect('raw_material_page')
 
+@login_required
 def customer_page(request):
     customers = Customer.objects.all()
 
@@ -324,6 +346,7 @@ def customer_page(request):
         'customers': customers
     })
 
+@login_required
 def add_customer(request):
 
     if request.method == 'POST':
@@ -343,6 +366,7 @@ def add_customer(request):
 
     return render(request, 'add_customer.html')
 
+@login_required
 def edit_customer(request, customer_id):
     customer = Customer.objects.get(id=customer_id)
 
@@ -360,12 +384,14 @@ def edit_customer(request, customer_id):
         'customer': customer
     })
 
+@login_required
 def delete_customer(request, customer_id):
     customer = Customer.objects.get(id=customer_id)
     customer.delete()
 
     return redirect('customer_page')
 
+@login_required
 def enquiry_page(request):
     enquiries = Enquiry.objects.all()
 
@@ -373,6 +399,7 @@ def enquiry_page(request):
         'enquiries': enquiries
     })
 
+@login_required
 def add_enquiry(request):
     customers = Customer.objects.all()
     products = Product.objects.all()
@@ -399,6 +426,7 @@ def add_enquiry(request):
         'products': products
     })
 
+@login_required
 def edit_enquiry(request, enquiry_id):
     enquiry = Enquiry.objects.get(id=enquiry_id)
 
@@ -422,12 +450,14 @@ def edit_enquiry(request, enquiry_id):
         'products': products
     })
 
+@login_required
 def delete_enquiry(request, enquiry_id):
     enquiry = Enquiry.objects.get(id=enquiry_id)
     enquiry.delete()
 
     return redirect('enquiry_page')
 
+@login_required
 def quotation_page(request):
     quotations = Quotation.objects.all()
 
@@ -435,6 +465,7 @@ def quotation_page(request):
         'quotations': quotations
     })
 
+@login_required
 def add_quotation(request):
     enquiries = Enquiry.objects.all()
 
@@ -463,6 +494,7 @@ def add_quotation(request):
         'enquiries': enquiries
     })
 
+@login_required
 def edit_quotation(request, quotation_id):
     quotation = Quotation.objects.get(id=quotation_id)
     enquiries = Enquiry.objects.all()
@@ -485,6 +517,7 @@ def edit_quotation(request, quotation_id):
         'enquiries': enquiries
     })
 
+@login_required
 def delete_quotation(request, quotation_id):
     quotation = Quotation.objects.get(id=quotation_id)
     quotation.delete()
